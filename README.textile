@@ -1,5 +1,7 @@
 h3. Alec's Configs
 
-This project contains both my VIM configs and my general Bash config files.  I typically symlink dot-files in my home dir to the appropriate files in this directory.
+This project contains both my VIM configs and my general Bash config files.
 
-TODO: Installer script to create these symlinks for easy setup.
+rake install:all       # Install symlinks and vim plugins
+rake install:dotfiles  # Symlink dotfiles from the home directory to the dotfiles directory
+rake install:vim       # Install vim plugins via symlink
