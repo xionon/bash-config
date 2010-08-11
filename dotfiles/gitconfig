@@ -1,0 +1,18 @@
+[alias]
+  undo = reset --hard
+  ci = commit
+  stat = status
+  co = checkout
+
+[color]
+  ui = auto
+
+# may need to use git config --global core.excludesfile ~/.gitignore to properly set this up.  dunno if this is actually working
+[core]
+	excludesfile = /Users/Alec/.gitignore
+
+[user]
+  name = 'Alec Hipshear'
+  email = alechipshear@gmail.com
+# [diff]
+# 	external = /Users/Alec/opendiff-git.sh

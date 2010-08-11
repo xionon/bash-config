@@ -1,0 +1,6 @@
+*.swp
+tags
+tags_exclude
+.bundle
+*.lck
+Gemfile.lock

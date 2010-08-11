@@ -1,0 +1,11 @@
+--- 
+:bulk_threshold: 1000
+:update_sources: true
+:sources: 
+- http://gemcutter.org/
+- http://gems.rubyforge.org/
+- http://gems.github.com/
+:backtrace: false
+:verbose: true
+:benchmark: false
+gem: --no-ri --no-rdoc
