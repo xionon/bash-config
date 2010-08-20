@@ -57,10 +57,6 @@ autocmd FileType ruby,eruby let g:rubycomplete_classes_in_global = 1
 let Tlist_Process_File_Always=1
 let Tlist_Show_Menu=1
 
-" FuzzyTextMate settings
-let g:fuzzy_ignore = "*.log"
-let g:fuzzy_matching_limit = 70 
-
 """"""""""""""""""""""""""
 " Keyboard Customizations"
 """"""""""""""""""""""""""
@@ -77,8 +73,6 @@ map <c-l> <c-w>l
 let mapleader = "," 
 
 " file browsing
-map <leader>t :FuzzyFinderTextMate<CR>
-map <leader>b :FuzzyFinderBuffer<CR>
 map <leader>d :execute 'NERDTreeToggle ' . getcwd()<CR>
 let NERDTreeIgnore=['\.vim$', '\.pyc$', '\~$']
 
