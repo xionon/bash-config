@@ -3,12 +3,12 @@ export PATH=/opt/local/bin:/opt/local/sbin:$PATH
 # Finished adapting your PATH environment variable for use with MacPorts.
 
 export PATH=/usr/local/mysql/bin:$PATH
-export MMX_GEMS_DIR=/Users/Alec/work/shared/gems
+# export MMX_GEMS_DIR=/Users/Alec/work/shared/gems
 export MMX_MYSQL_GEM_VERSION=2.7
 
 export CLICOLOR=1
 export LSCOLORS=dxfxcxdxbxegedabagacad
-alias lsa='ls -la'
+alias lsa='ls -lah'
 alias gpp="git pull; git push"
 # alias rsense='/usr/lib/rsense-0.2/bin/rsense --config=~/.rsense'
 
