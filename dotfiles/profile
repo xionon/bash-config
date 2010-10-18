@@ -1,11 +1,4 @@
-# MacPorts Installer addition on 2010-03-30_at_10:35:43: adding an appropriate PATH variable for use with MacPorts.
-export PATH=/opt/local/bin:/opt/local/sbin:$PATH
-# Finished adapting your PATH environment variable for use with MacPorts.
-
 export PATH=/usr/local/mysql/bin:$PATH
-# export MMX_GEMS_DIR=/Users/Alec/work/shared/gems
-export MMX_MYSQL_GEM_VERSION=2.7
-
 export CLICOLOR=1
 export LSCOLORS=dxfxcxdxbxegedabagacad
 alias lsa='ls -lah'
@@ -24,10 +17,3 @@ export EDITOR="mvim --remote-wait"
 export RSENSE_HOME="/usr/lib/rsense-0.2"
 
 if [[ -s /Users/Alec/.rvm/scripts/rvm ]] ; then source /Users/Alec/.rvm/scripts/rvm ; fi
-
-function nwa3 {
-  cd ~/work/nwa3
-  rvm ruby-1.9.2-head
-}
-
-source ~/mmx.sh
