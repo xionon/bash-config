@@ -15,5 +15,4 @@ export PYTHONPATH=/Library/Frameworks/Python.framework/Versions/2.5/lib/python2.
 
 export EDITOR="mvim --remote-wait"
 export RSENSE_HOME="/usr/lib/rsense-0.2"
-
-if [[ -s /Users/Alec/.rvm/scripts/rvm ]] ; then source /Users/Alec/.rvm/scripts/rvm ; fi
+[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" 

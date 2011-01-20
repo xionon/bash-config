@@ -4,7 +4,7 @@ end
 
 namespace :install do
   desc "Install symlinks and vim plugins"
-  task :all => [:dotfiles, :vim]
+  task :all => [:gitconfig, :vim]
 
   desc "Symlink dotfiles from the home directory to the dotfiles directory"
   task :dotfiles do
@@ -20,6 +20,12 @@ namespace :install do
 
       puts File.exists?(symlink_path)
     end
+
+  end
+
+  desc "Configure global git stuff"
+  task :gitconfig => [:dotfiles] do
+    `git config --global core.excludesfile ~/.gitignore` 
   end
 
   # TODO: update plugins automatically?

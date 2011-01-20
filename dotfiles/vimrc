@@ -97,7 +97,7 @@ map <leader>fs :set invfullscreen<CR>
 let g:showmarks_enable=1 
 let g:showmarks_include="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
-let g:rails_ctags_arguments='--exclude="*.*.js" --exclude="facebox.js" --exclude="@tags_exclude"'
+let g:rails_ctags_arguments='--exclude="*.*.js" --exclude="facebox.js"'
 
 autocmd FileType make     set noexpandtab
 
@@ -123,3 +123,5 @@ if has("gui_running")
   set guioptions-=T         " get rid of the toolbar
   set guicursor=a:blinkon0  " no blinking cursor
 endif 
+
+set foldmethod=manual
