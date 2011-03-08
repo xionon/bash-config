@@ -27,9 +27,9 @@ set title
 set fileformat=unix
 set number
 set background=dark
-" set guifont=DejaVu\ Sans\ Mono\ 8
+set guifont=DejaVu\ Sans\ Mono\ 8
 " set guifont=Inconsolata:h14
-set guifont=Menlo:h12
+" set guifont=Menlo:h12
 set ts=2
 set shiftwidth=2
 set expandtab
