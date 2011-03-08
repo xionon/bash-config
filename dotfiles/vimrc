@@ -35,7 +35,8 @@ set shiftwidth=2
 set expandtab
 set guioptions-=T
 set visualbell
-set nowrap
+set wrap
+set lbr
 set ruler
 set cursorline
 " set cursorcolumn

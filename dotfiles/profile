@@ -1,4 +1,5 @@
 export PATH=/usr/local/mysql/bin:$PATH
+export PATH=/usr/local/bin:/usr/local/sbin:$PATH
 export CLICOLOR=1
 export LSCOLORS=dxfxcxdxbxegedabagacad
 alias lsa='ls -lah'
@@ -10,9 +11,16 @@ source ~/.git-completion.bash
 if [[ -s ~/.private-profile ]] ; then source ~/.private-profile ; fi
 
 export PS1='\w$(__git_ps1 "(%s)")$ '
+export RUBYLIB="/usr/local/lib:$RUBYLIB"
 
 export PYTHONPATH=/Library/Frameworks/Python.framework/Versions/2.5/lib/python2.5/site-packages/
 
 export EDITOR="mvim --remote-wait"
 export RSENSE_HOME="/usr/lib/rsense-0.2"
 [[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" 
+
+
+# the part we are adding
+ODBCINI=/usr/local/etc/odbc.ini
+ODBCSYSINI=/usr/local/etc
+FREETDSCONF=/usr/local/etc/freetds.conf
