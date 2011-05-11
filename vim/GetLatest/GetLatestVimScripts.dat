@@ -11,3 +11,10 @@ ScriptID SourceID Filename
 1890 15545 :AutoInstall: lusty-explorer.vim
 2136 8206 :AutoInstall: repeat.vim
 152 3342 :AutoInstall: showmarks.vim
+1658 11834 :AutoInstall: NERD_tree.vim
+2572 10433 :AutoInstall: ack.vim
+3025 15560 :AutoInstall: command-t.vim
+2386 9299 :AutoInstall: endwise.vim
+3361 15208 :AutoInstall: indent_guides.vim
+39 8196 :AutoInstall: matchit.vim
+1318 8450 :AutoInstall: snippetsEmu.vim
