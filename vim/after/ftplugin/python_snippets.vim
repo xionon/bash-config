@@ -9,7 +9,7 @@ function! PyCleanupArgs(text)
         return ''
     endif
     let text = substitute(a:text, '\(\w\)\s\(\w\)', '\1,\2', 'g')
-    return ', '.join(split(text, '\s*,\s*'), ', ')
+    return join(split(text, '\s*,\s*'), ', ')
 endfunction
 
 " Given a string containing a list of arguments (e.g. "one = 'test', *args,
@@ -142,7 +142,7 @@ exec "Snippet cl class ".st."ClassName".et."(".st."object".et."):
 \<CR>This class represents ".st.et."
 \<CR>\"\"\"
 \<CR>
-\<CR>def __init__(self".st."args:PyCleanupArgs(@z)".et."):
+\<CR>def __init__(self, ".st."args:PyCleanupArgs(@z)".et."):
 \<CR>\"\"\"
 \<CR>Constructor.
 \<CR>".st."args:PyGetDocstringFromArgs(@z)".et."\"\"\"
