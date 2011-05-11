@@ -1,4 +1,4 @@
-"    Copyright: Copyright (C) 2007-2010 Stephen Bach
+"    Copyright: Copyright (C) 2007-2011 Stephen Bach
 "               Permission is hereby granted to use and distribute this code,
 "               with or without modifications, provided that this copyright
 "               notice is copied with it. Like anything else that's free,
@@ -14,10 +14,12 @@
 " Contributors: Raimon Grau, Sergey Popov, Yuichi Tateno, Bernhard Walle,
 "               Rajendra Badapanda, cho45, Simo Salminen, Sami Samhuri,
 "               Matt Tolton, Björn Winckler, sowill, David Brown
-"               Brett DiFrischia, Ali Asad Lotia, Kenneth Love, Ben Boeckel
+"               Brett DiFrischia, Ali Asad Lotia, Kenneth Love, Ben Boeckel,
+"               robquant, lilydjwg, Martin Wache, Johannes Holzfuß
+"               Donald Curtis, Jan Zwiener
 "
-" Release Date: June 28, 2010
-"      Version: 3.1.1
+" Release Date: April 29, 2011
+"      Version: 4.1
 "
 "        Usage:
 "                 <Leader>lf  - Opens the filesystem explorer.
@@ -29,7 +31,7 @@
 "
 "               You can also use the commands:
 "
-"                 ":LustyFilesystemExplorer"
+"                 ":LustyFilesystemExplorer [optional-path]"
 "                 ":LustyFilesystemExplorerFromHere"
 "                 ":LustyBufferExplorer"
 "                 ":LustyBufferGrep"
@@ -58,6 +60,8 @@
 "
 "                 <C-n>    select [n]ext match
 "                 <C-p>    select [p]revious match
+"                 <C-f>    select [f]orward one column
+"                 <C-b>    select [b]ack one column
 "
 "                 <C-u>    clear prompt
 "
@@ -133,6 +137,16 @@
 "
 "   let g:LustyExplorerSuppressRubyWarning = 1
 "
+"
+" Contributing:
+"
+" Patches and suggestions welcome.  Note: lusty-explorer.vim is a generated
+" file; if you'd like to submit a patch, check out the Github development
+" repository:
+"
+"    http://github.com/sjbach/lusty
+"
+"
 " GetLatestVimScripts: 1890 1 :AutoInstall: lusty-explorer.vim
 "
 " TODO:
@@ -143,7 +157,6 @@
 " - uppercase character should make matching case-sensitive
 " - FilesystemGrep
 " - C-jhkl navigation to highlight a file?
-" - abbrev "a" should score e.g. "ad" higher than "m-a"
 
 " Exit quickly when already loaded.
 if exists("g:loaded_lustyexplorer")
@@ -232,8 +245,8 @@ let g:loaded_lustyexplorer = "yep"
 
 " Commands.
 command LustyBufferExplorer :call <SID>LustyBufferExplorerStart()
-command LustyFilesystemExplorer :call <SID>LustyFilesystemExplorerStart()
-command LustyFilesystemExplorerFromHere :call <SID>LustyFilesystemExplorerFromHereStart()
+command -nargs=? LustyFilesystemExplorer :call <SID>LustyFilesystemExplorerStart("<args>")
+command LustyFilesystemExplorerFromHere :call <SID>LustyFilesystemExplorerStart(expand("%:p:h"))
 command LustyBufferGrep :call <SID>LustyBufferGrepStart()
 
 " Deprecated command names.
@@ -259,12 +272,8 @@ nmap <silent> <Leader>lb :LustyBufferExplorer<CR>
 nmap <silent> <Leader>lg :LustyBufferGrep<CR>
 
 " Vim-to-ruby function calls.
-function! s:LustyFilesystemExplorerStart()
-  ruby LustyE::profile() { $lusty_filesystem_explorer.run_from_wd }
-endfunction
-
-function! s:LustyFilesystemExplorerFromHereStart()
-  ruby LustyE::profile() { $lusty_filesystem_explorer.run_from_here }
+function! s:LustyFilesystemExplorerStart(path)
+  exec "ruby LustyE::profile() { $lusty_filesystem_explorer.run_from_path('".a:path."') }"
 endfunction
 
 function! s:LustyBufferExplorerStart()
@@ -360,6 +369,11 @@ module VIM
     nonzero? evaluate('has("syntax")')
   end
 
+  def self.has_ext_maparg?
+    # The 'dict' parameter to mapargs() was introduced in Vim 7.3.32
+    nonzero? evaluate('v:version > 703 || (v:version == 703 && has("patch32"))')
+  end
+
   def self.columns
     evaluate("&columns").to_i
   end
@@ -387,8 +401,9 @@ module VIM
   end
 
   def self.filename_escape(s)
-    # Escape slashes, open square braces, spaces, sharps, and double quotes.
-    s.gsub(/\\/, '\\\\\\').gsub(/[\[ #"]/, '\\\\\0')
+    # Escape slashes, open square braces, spaces, sharps, double quotes and
+    # percent signs.
+    s.gsub(/\\/, '\\\\\\').gsub(/[\[ #"%]/, '\\\\\0')
   end
 
   def self.regex_escape(s)
@@ -398,6 +413,10 @@ module VIM
   class Buffer
     def modified?
       VIM::nonzero? VIM::evaluate("getbufvar(#{number()}, '&modified')")
+    end
+
+    def listed?
+      VIM::nonzero? VIM::evaluate("getbufvar(#{number()}, '&buflisted')")
     end
 
     def self.obj_for_bufnr(n)
@@ -425,6 +444,22 @@ module VIM
     end
 
     command 'echohl None'
+  end
+end
+
+# Hack for wide CJK characters.
+if VIM::exists?("*strwidth")
+  module VIM
+    def self.strwidth(s)
+      # strwidth() is defined in Vim 7.3.
+      evaluate("strwidth('#{single_quote_escape(s)}')").to_i
+    end
+  end
+else
+  module VIM
+    def self.strwidth(s)
+      s.length
+    end
   end
 end
 
@@ -543,58 +578,98 @@ module LustyE
 end
 
 
-# Port of Ryan McGeary's LiquidMetal fuzzy matching algorithm found at:
-#   http://github.com/rmm5t/liquidmetal/tree/master.
-module LiquidMetal
-  @@SCORE_NO_MATCH = 0.0
-  @@SCORE_MATCH = 1.0
-  @@SCORE_TRAILING = 0.8
-  @@SCORE_TRAILING_BUT_STARTED = 0.90
-  @@SCORE_BUFFER = 0.85
-
-  def self.score(string, abbrev)
-
-    return @@SCORE_TRAILING if abbrev.empty?
-    return @@SCORE_NO_MATCH if abbrev.length > string.length
-
-    scores = buildScoreArray(string, abbrev)
-
-    # Faster than Array#inject...
-    sum = 0.0
-    scores.each { |x| sum += x }
-
-    return sum / scores.length;
-  end
-
-  def self.buildScoreArray(string, abbrev)
-    scores = Array.new(string.length)
-    lower = string.downcase()
-
-    lastIndex = 0
-    started = false
-
-    abbrev.downcase().each_char do |c|
-      index = lower.index(c, lastIndex)
-      return scores.fill(@@SCORE_NO_MATCH) if index.nil?
-      started = true if index == 0
-
-      if index > 0 and " ._-".include?(string[index - 1])
-        scores[index - 1] = @@SCORE_MATCH
-        scores.fill(@@SCORE_BUFFER, lastIndex...(index - 1))
-      elsif string[index] >= ?A and string[index] <= ?Z
-        scores.fill(@@SCORE_BUFFER, lastIndex...index)
-      else
-        scores.fill(@@SCORE_NO_MATCH, lastIndex...index)
-      end
-
-      scores[index] = @@SCORE_MATCH
-      lastIndex = index + 1
+# Mercury fuzzy matching algorithm, written by Matt Tolton.
+#  based on the Quicksilver and LiquidMetal fuzzy matching algorithms
+class Mercury
+  public
+    def self.score(string, abbrev)
+      return self.new(string, abbrev).score()
     end
 
-    trailing_score = started ? @@SCORE_TRAILING_BUT_STARTED : @@SCORE_TRAILING
-    scores.fill(trailing_score, lastIndex)
-    return scores
-  end
+    def score()
+      return @@SCORE_TRAILING if @abbrev.empty?
+      return @@SCORE_NO_MATCH if @abbrev.length > @string.length
+
+      raw_score = raw_score(0, 0, 0, false)
+      return raw_score / @string.length
+    end
+
+    def initialize(string, abbrev)
+      @string = string
+      @lower_string = string.downcase()
+      @abbrev = abbrev.downcase()
+      @level = 0
+      @branches = 0
+    end
+
+  private
+    @@SCORE_NO_MATCH = 0.0 # do not change, this is assumed to be 0.0
+    @@SCORE_EXACT_MATCH = 1.0
+    @@SCORE_MATCH = 0.9
+    @@SCORE_TRAILING = 0.7
+    @@SCORE_TRAILING_BUT_STARTED = 0.80
+    @@SCORE_BUFFER = 0.70
+    @@SCORE_BUFFER_BUT_STARTED = 0.80
+
+    @@BRANCH_LIMIT = 100
+
+    #def raw_score(a, b, c, d)
+    #  @level += 1
+    #  puts "#{' ' * @level}#{a}, #{b}, #{c}, #{d}"
+    #  ret = recurse_and_score(a, b, c, d)
+    #  puts "#{' ' * @level}#{a}, #{b}, #{c}, #{d} -> #{ret}"
+    #  @level -= 1
+    #  return ret
+    #end
+
+    def raw_score(abbrev_idx, match_idx, score_idx, first_char_matched)
+      index = @lower_string.index(@abbrev[abbrev_idx], match_idx)
+      return 0.0 if index.nil?
+
+      # TODO Instead of having two scores, should there be a sliding "match"
+      # score based on the distance of the matched character to the beginning
+      # of the string?
+      if abbrev_idx == index
+        score = @@SCORE_EXACT_MATCH
+      else
+        score = @@SCORE_MATCH
+      end
+
+      started = (index == 0 or first_char_matched)
+
+      # If matching on a word boundary, score the characters since the last match
+      if index > score_idx
+        buffer_score = started ? @@SCORE_BUFFER_BUT_STARTED : @@SCORE_BUFFER
+        if " \t/._-".include?(@string[index - 1])
+          score += @@SCORE_MATCH
+          score += buffer_score * ((index - 1) - score_idx)
+        elsif @string[index] >= "A"[0] and @string[index] <= "Z"[0]
+          score += buffer_score * (index - score_idx)
+        end
+      end
+
+      if abbrev_idx + 1 == @abbrev.length
+        trailing_score = started ? @@SCORE_TRAILING_BUT_STARTED : @@SCORE_TRAILING
+        # We just matched the last character in the pattern
+        score += trailing_score * (@string.length - (index + 1))
+      else
+        tail_score = raw_score(abbrev_idx + 1, index + 1, index + 1, started)
+        return 0.0 if tail_score == 0.0
+        score += tail_score
+      end
+
+      if @branches < @@BRANCH_LIMIT
+        @branches += 1
+        alternate = raw_score(abbrev_idx,
+                              index + 1,
+                              score_idx,
+                              first_char_matched)
+        #puts "#{' ' * @level}#{score}, #{alternate}"
+        score = [score, alternate].max
+      end
+
+      return score
+    end
 end
 
 
@@ -609,12 +684,13 @@ class Entry
     @label = label
   end
 
+  # NOTE: very similar to BufferStack::shorten_paths()
   def self.compute_buffer_entries()
     buffer_entries = []
 
     $le_buffer_stack.numbers.each do |n|
       o = VIM::Buffer.obj_for_bufnr(n)
-      next if o.nil?
+      next if (o.nil? or not o.listed?)
       buffer_entries << self.new(o, n)
     end
 
@@ -754,6 +830,26 @@ class Explorer
           @selected_index = \
             (@selected_index - 1) % @current_sorted_matches.size
           refresh_mode = :no_recompute
+        when 6                # C-f (select right)
+          columns = (@current_sorted_matches.size.to_f / @row_count.to_f).ceil
+          cur_column = @selected_index / @row_count
+          cur_row = @selected_index % @row_count
+          new_column = (cur_column + 1) % columns
+          if (new_column + 1) * (cur_row + 1) > @current_sorted_matches.size
+            new_column = 0
+          end
+          @selected_index = new_column * @row_count + cur_row
+          refresh_mode = :no_recompute
+        when 2                # C-b (select left)
+          columns = (@current_sorted_matches.size.to_f / @row_count.to_f).ceil
+          cur_column = @selected_index / @row_count
+          cur_row = @selected_index % @row_count
+          new_column = (cur_column - 1) % columns
+          if (new_column + 1) * (cur_row + 1) > @current_sorted_matches.size
+            new_column = columns - 2
+          end
+          @selected_index = new_column * @row_count + cur_row
+          refresh_mode = :no_recompute
         when 15               # C-o choose in new horizontal split
           choose(:new_split)
         when 20               # C-t choose in new tab
@@ -796,8 +892,8 @@ class Explorer
 
       on_refresh()
       highlight_selected_index() if VIM::has_syntax?
-      @display.print @current_sorted_matches.map { |x| x.label }
-      @prompt.print
+      @row_count = @display.print @current_sorted_matches.map { |x| x.label }
+      @prompt.print Display.max_width
     end
 
     def create_explorer_window
@@ -921,7 +1017,7 @@ class BufferExplorer < Explorer
       else
         matching_entries = \
           @buffer_entries.select { |x|
-            x.current_score = LiquidMetal.score(x.short_name, abbrev)
+            x.current_score = Mercury.score(x.short_name, abbrev)
             x.current_score != 0.0
           }
 
@@ -982,21 +1078,12 @@ class FilesystemExplorer < Explorer
       super
     end
 
-    def run_from_here
+    def run_from_path(path)
       return if @running
-      start_path = if $curbuf.name.nil?
-                     VIM::getcwd()
-                   else
-                     VIM::evaluate("expand('%:p:h')")
-                   end
-
-      @prompt.set!(start_path + File::SEPARATOR)
-      run()
-    end
-
-    def run_from_wd
-      return if @running
-      @prompt.set!(VIM::getcwd() + File::SEPARATOR)
+      if path.empty?
+        path = VIM::getcwd()
+      end
+      @prompt.set!(path + File::SEPARATOR)
       run()
     end
 
@@ -1153,7 +1240,7 @@ class FilesystemExplorer < Explorer
       else
         matches = \
           unsorted.select { |x|
-            x.current_score = LiquidMetal.score(x.label, abbrev)
+            x.current_score = Mercury.score(x.label, abbrev)
             x.current_score != 0.0
           }
 
@@ -1419,9 +1506,16 @@ class Prompt
       @input = ""
     end
 
-    def print
+    def print(max_width = 0)
+      text = @input
+      # may need some extra characters for "..." and spacing
+      max_width -= 5
+      if max_width > 0 && text.length > max_width
+        text = "..." + text[(text.length - max_width + 3 ) .. -1]
+      end
+
       VIM::pretty_msg("Comment", @@PROMPT,
-                      "None", VIM::single_quote_escape(@input),
+                      "None", VIM::single_quote_escape(text),
                       "Underlined", " ")
     end
 
@@ -1592,6 +1686,8 @@ class SavedSettings
     @report = VIM::evaluate("&report")
     @sidescroll = VIM::evaluate("&sidescroll")
     @sidescrolloff = VIM::evaluate("&sidescrolloff")
+
+    VIM::command "let s:win_size_restore = winrestcmd()"
   end
 
   def restore
@@ -1624,6 +1720,8 @@ class SavedSettings
     VIM::command "set report=#{@report}"
     VIM::command "set sidescroll=#{@sidescroll}"
     VIM::command "set sidescrolloff=#{@sidescrolloff}"
+
+    VIM::command "exe s:win_size_restore"
   end
 end
 end
@@ -1728,6 +1826,10 @@ class Display
         VIM::command 'highlight link LustyFileWithSwap WarningMsg'
         VIM::command 'highlight link LustyNoEntries ErrorMsg'
         VIM::command 'highlight link LustyTruncated Visual'
+
+        if VIM::exists? '*clearmatches'
+          VIM::evaluate 'clearmatches()'
+        end
       end
 
       #
@@ -1766,6 +1868,8 @@ class Display
       VIM::command "#{map} <C-w>    :call <SID>#{prefix}KeyPressed(23)<CR>"
       VIM::command "#{map} <C-n>    :call <SID>#{prefix}KeyPressed(14)<CR>"
       VIM::command "#{map} <C-p>    :call <SID>#{prefix}KeyPressed(16)<CR>"
+      VIM::command "#{map} <C-f>    :call <SID>#{prefix}KeyPressed(6)<CR>"
+      VIM::command "#{map} <C-b>    :call <SID>#{prefix}KeyPressed(2)<CR>"
       VIM::command "#{map} <C-o>    :call <SID>#{prefix}KeyPressed(15)<CR>"
       VIM::command "#{map} <C-t>    :call <SID>#{prefix}KeyPressed(20)<CR>"
       VIM::command "#{map} <C-v>    :call <SID>#{prefix}KeyPressed(22)<CR>"
@@ -1797,7 +1901,7 @@ class Display
 
           if col_index < col_count - 1
             # Add spacer to the width of the column
-            rows[i] << (" " * (column_width - string.length))
+            rows[i] << (" " * (column_width - VIM::strwidth(string)))
             rows[i] << @@COLUMN_SEPARATOR
           end
         end
@@ -1807,6 +1911,7 @@ class Display
       end
 
       print_rows(rows, truncated)
+      row_count
     end
 
     def close
@@ -1874,7 +1979,8 @@ class Display
       column_widths = []
       total_width = 0
       strings.each_slice(optimal_row_count) do |column|
-        column_width = column.max { |a, b| a.length <=> b.length }.length
+        longest = column.max { |a, b| VIM::strwidth(a) <=> VIM::strwidth(b) }
+        column_width = VIM::strwidth(longest)
         total_width += column_width
 
         break if total_width > max_width
@@ -2187,8 +2293,11 @@ class BufferStack
 
   private
     def cull!
-      # Remove empty buffers.
-      @stack.delete_if { |x| not VIM::evaluate_bool("bufexists(#{x})") }
+      # Remove empty and unlisted buffers.
+      @stack.delete_if { |x|
+        not (VIM::evaluate_bool("bufexists(#{x})") and
+             VIM::evaluate_bool("getbufvar(#{x}, '&buflisted')"))
+      }
     end
 
     # NOTE: very similar to Entry::compute_buffer_entries()
