@@ -1,6 +1,7 @@
 let g:netrw_dirhistmax  =10
-let g:netrw_dirhist_cnt =4
+let g:netrw_dirhist_cnt =5
 let g:netrw_dirhist_1='/Users/alechipshear/work/intercajero/app/helpers/kiosk'
 let g:netrw_dirhist_2='/Users/alechipshear/work/ic2/app/models/intercambio'
 let g:netrw_dirhist_3='/Users/alechipshear/work/ic2/public/javascripts/dynamic_selects'
 let g:netrw_dirhist_4='/Users/alechipshear/work/ic2/app/models/intercambio'
+let g:netrw_dirhist_5='/Users/alechipshear/bash-config/vim/plugin'
