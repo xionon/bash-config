@@ -16,4 +16,4 @@ ODBCINI=/usr/local/etc/odbc.ini
 ODBCSYSINI=/usr/local/etc
 FREETDSCONF=/usr/local/etc/freetds.conf
 
-export EDITOR="gvim --remote-wait"
+export EDITOR="mvim --remote-wait"
