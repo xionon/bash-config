@@ -5,7 +5,7 @@ ScriptID SourceID Filename
 1896 12338 :AutoInstall: ragtag.vim
 1567 13800 :AutoInstall: rails.vim
 1697 12566 :AutoInstall: surround.vim
-1173 14811 :AutoInstall: tComment.vim
+1173 15731 :AutoInstall: tComment.vim
 1502 15362 :AutoInstall: vimball.vim
 1624 10260 :AutoInstall: pastie.vim
 1890 15545 :AutoInstall: lusty-explorer.vim
