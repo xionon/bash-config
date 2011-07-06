@@ -1,7 +1,7 @@
 ScriptID SourceID Filename
 --------------------------
 2975 15542 :AutoInstall: fugitive.vim
-1075 15352 :AutoInstall: netrw.vim
+1075 15782 :AutoInstall: netrw.vim
 1896 12338 :AutoInstall: ragtag.vim
 1567 13800 :AutoInstall: rails.vim
 1697 12566 :AutoInstall: surround.vim

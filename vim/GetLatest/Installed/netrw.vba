@@ -25,7 +25,7 @@ plugin/netrwPlugin.vim	[[[1
 if &cp || exists("g:loaded_netrwPlugin")
  finish
 endif
-let g:loaded_netrwPlugin = "v141"
+let g:loaded_netrwPlugin = "v142"
 if v:version < 702
  echohl WarningMsg | echo "***netrw*** you need vim version 7.2 for this version of netrw" | echohl None
  finish
@@ -175,11 +175,11 @@ let &cpo= s:keepcpo
 unlet s:keepcpo
 " vim:ts=8 fdm=marker
 autoload/netrw.vim	[[[1
-8655
+8691
 " netrw.vim: Handles file transfer and remote directory listing across
 "            AUTOLOAD SECTION
-" Date:		Apr 01, 2011
-" Version:	141
+" Date:		May 31, 2011
+" Version:	142
 " Maintainer:	Charles E Campbell, Jr <NdrOchip@ScampbellPfamily.AbizM-NOSPAM>
 " GetLatestVimScripts: 1075 1 :AutoInstall: netrw.vim
 " Copyright:    Copyright (C) 1999-2010 Charles E. Campbell, Jr. {{{1
@@ -200,7 +200,7 @@ autoload/netrw.vim	[[[1
 if &cp || exists("g:loaded_netrw")
   finish
 endif
-let g:loaded_netrw = "v141"
+let g:loaded_netrw = "v142"
 if v:version < 702
  echohl WarningMsg
  echo "***warning*** this version of netrw needs vim 7.2"
@@ -469,7 +469,7 @@ call s:NetrwInit("g:netrw_timefmt","%c")
 call s:NetrwInit("g:netrw_xstrlen",0)
 call s:NetrwInit("g:NetrwTopLvlMenu","Netrw.")
 call s:NetrwInit("g:netrw_win95ftp",1)
-call s:NetrwInit("g:netrw_winsize",25)
+call s:NetrwInit("g:netrw_winsize",50)
 " ---------------------------------------------------------------------
 " Default values for netrw's script variables: {{{2
 call s:NetrwInit("g:netrw_fname_escape",' ?&;%')
@@ -1696,6 +1696,14 @@ endfun
 fun! s:NetrwMethod(choice)
 "   call Dfunc("NetrwMethod(a:choice<".a:choice.">)")
 
+   " sanity check: choice should have at least three slashes in it
+   if strlen(substitute(a:choice,'[^/]','','g')) < 3
+    call netrw#ErrorMsg(s:ERROR,"not a netrw-style url; netrw uses protocol://[user@]hostname[:port]/[path])",78)
+    let b:netrw_method = -1
+"    call Dret("NetrwMethod : incorrect url format<".a:choice.">")
+    return
+   endif
+
    " record current g:netrw_machine, if any
    " curmachine used if protocol == ftp and no .netrc
    if exists("g:netrw_machine")
@@ -1991,6 +1999,25 @@ endfun
 " s:NetrwMaps: {{{2
 fun! s:NetrwMaps(islocal)
 "  call Dfunc("s:NetrwMaps(islocal=".a:islocal.") b:netrw_curdir<".b:netrw_curdir.">")
+
+  " set up Rexplore and [ 2-leftmouse-click -or- c-leftmouse ]
+"  call Decho("set up Rexplore command")
+  com! Rexplore call s:NetrwRexplore(w:netrw_rexlocal,exists("w:netrw_rexdir")? w:netrw_rexdir : ".")
+  if g:netrw_mousemaps && g:netrw_retmap
+"   call Decho("set up Rexplore 2-leftmouse")
+   if !hasmapto("<Plug>NetrwReturn")
+    if maparg("<2-leftmouse>","n") == "" || maparg("<2-leftmouse>","n") =~ '^-$'
+"     call Decho("making map for 2-leftmouse")
+     nmap <unique> <silent> <2-leftmouse>	<Plug>NetrwReturn
+    elseif maparg("<c-leftmouse>","n") == ""
+"     call Decho("making map for c-leftmouse")
+     nmap <unique> <silent> <c-leftmouse>	<Plug>NetrwReturn
+    endif
+   endif
+   nno <silent> <Plug>NetrwReturn	:Rexplore<cr>
+"   call Decho("made <Plug>NetrwReturn map")
+  endif
+
   if a:islocal
 "   call Decho("make local maps")
    inoremap <buffer> <silent> a		<c-o>:call <SID>NetrwHide(1)<cr>
@@ -2103,15 +2130,22 @@ fun! s:NetrwMaps(islocal)
    endif
    let mapsafecurdir = escape(b:netrw_curdir, s:netrw_map_escape)
    if g:netrw_mousemaps == 1
-    nnoremap <buffer> <silent> <leftmouse>   <leftmouse>:call <SID>NetrwLeftmouse(1)<cr>
-    nnoremap <buffer> <silent> <middlemouse> <leftmouse>:call <SID>NetrwPrevWinOpen(1)<cr>
-    nnoremap <buffer> <silent> <s-leftmouse> <leftmouse>:call <SID>NetrwMarkFile(1,<SID>NetrwGetWord())<cr>
-    nmap     <buffer> <silent> <2-leftmouse> -
+    nmap <buffer> <leftmouse>   <Plug>NetrwLeftmouse
+    nno  <buffer> <silent>	<Plug>NetrwLeftmouse	<leftmouse>:call <SID>NetrwLeftmouse(1)<cr>
+    nmap <buffer> <middlemouse>	<Plug>NetrwMiddlemouse
+    nno  <buffer> <silent>	<Plug>NetrwMiddlemouse	<leftmouse>:call <SID>NetrwPrevWinOpen(1)<cr>
+    nmap <buffer> <s-leftmouse>	<Plug>NetrwSLeftmouse
+    nno  <buffer> <silent>	<Plug>NetrwSLeftmouse   <leftmouse>:call <SID>NetrwMarkFile(1,<SID>NetrwGetWord())<cr>
+    nmap <buffer> <2-leftmouse>	<Plug>Netrw2Leftmouse
+    nmap <buffer> <silent>	<Plug>Netrw2Leftmouse	-
+    imap <buffer> <leftmouse>	<Plug>ILeftmouse
+    ino  <buffer> <silent>	<Plug>ILeftmouse	<c-o><leftmouse><c-o>:call <SID>NetrwLeftmouse(1)<cr>
+    imap <buffer> <middlemouse>	<Plug>IMiddlemouse
+    ino  <buffer> <silent>	<Plug>IMiddlemouse	<c-o><leftmouse><c-o>:call <SID>NetrwPrevWinOpen(1)<cr>
+    imap <buffer> <s-leftmouse>	<Plug>ISLeftmouse
+    ino  <buffer> <silent>	<Plug>ISLeftmouse	<c-o><leftmouse><c-o>:call <SID>NetrwMarkFile(1,<SID>NetrwGetWord())<cr>
     exe 'nnoremap <buffer> <silent> <rightmouse>  <leftmouse>:call <SID>NetrwLocalRm("'.mapsafecurdir.'")<cr>'
     exe 'vnoremap <buffer> <silent> <rightmouse>  <leftmouse>:call <SID>NetrwLocalRm("'.mapsafecurdir.'")<cr>'
-    inoremap <buffer> <silent> <leftmouse>   <c-o><leftmouse><c-o>:call <SID>NetrwLeftmouse(1)<cr>
-    inoremap <buffer> <silent> <middlemouse> <c-o><leftmouse><c-o>:call <SID>NetrwPrevWinOpen(1)<cr>
-    inoremap <buffer> <silent> <s-leftmouse> <c-o><leftmouse><c-o>:call <SID>NetrwMarkFile(1,<SID>NetrwGetWord())<cr>
     exe 'inoremap <buffer> <silent> <rightmouse>  <c-o><leftmouse><c-o>:call <SID>NetrwLocalRm("'.mapsafecurdir.'")<cr>'
    endif
    exe 'nnoremap <buffer> <silent> <del>	:call <SID>NetrwLocalRm("'.mapsafecurdir.'")<cr>'
@@ -2231,17 +2265,24 @@ fun! s:NetrwMaps(islocal)
    let mapsafepath     = escape(s:path, s:netrw_map_escape)
    let mapsafeusermach = escape(s:user.s:machine, s:netrw_map_escape)
 
-   nnoremap <buffer> <silent> <Plug>NetrwRefresh		:call <SID>NetrwRefresh(0,<SID>NetrwBrowseChgDir(0,'./'))<cr>
+   nnoremap <buffer> <silent> <Plug>NetrwRefresh	:call <SID>NetrwRefresh(0,<SID>NetrwBrowseChgDir(0,'./'))<cr>
    if g:netrw_mousemaps == 1
-    nnoremap <buffer> <silent> <leftmouse>   <leftmouse>:call <SID>NetrwLeftmouse(0)<cr>
-    nnoremap <buffer> <silent> <middlemouse> <leftmouse>:call <SID>NetrwPrevWinOpen(0)<cr>
-    nnoremap <buffer> <silent> <s-leftmouse> <leftmouse>:call <SID>NetrwMarkFile(0,<SID>NetrwGetWord())<cr>
-    nmap     <buffer> <silent> <2-leftmouse> -
+    nmap <leftmouse>		<Plug>NetrwLeftmouse
+    nno <buffer> <silent>	<Plug>NetrwLeftmouse	<leftmouse>:call <SID>NetrwLeftmouse(0)<cr>
+    nmap <middlemouse>		<Plug>NetrwMiddlemouse
+    nno  <buffer> <silent>	<middlemouse>		<Plug>NetrwMiddlemouse <leftmouse>:call <SID>NetrwPrevWinOpen(0)<cr>
+    nmap <buffer> <s-leftmouse>	<Plug>NetrwSLeftmouse
+    nno  <buffer> <silent>	<Plug>NetrwSLeftmouse   <leftmouse>:call <SID>NetrwMarkFile(0,<SID>NetrwGetWord())<cr>
+    nmap <buffer> <2-leftmouse>	<Plug>Netrw2Leftmouse
+    nmap <buffer> <silent>	<Plug>Netrw2Leftmouse	-
+    imap <buffer> <leftmouse>	<Plug>ILeftmouse
+    ino  <buffer> <silent>	<Plug>ILeftmouse	<c-o><leftmouse><c-o>:call <SID>NetrwLeftmouse(0)<cr>
+    imap <buffer> <middlemouse>	<Plug>IMiddlemouse
+    ino  <buffer> <silent>	<Plug>IMiddlemouse	<c-o><leftmouse><c-o>:call <SID>NetrwPrevWinOpen(0)<cr>
+    imap <buffer> <s-leftmouse>	<Plug>ISLeftmouse
+    ino  <buffer> <silent>	<Plug>ISLeftmouse	<c-o><leftmouse><c-o>:call <SID>NetrwMarkFile(0,<SID>NetrwGetWord())<cr>
     exe 'nnoremap <buffer> <silent> <rightmouse> <leftmouse>:call <SID>NetrwRemoteRm("'.mapsafeusermach.'","'.mapsafepath.'")<cr>'
     exe 'vnoremap <buffer> <silent> <rightmouse> <leftmouse>:call <SID>NetrwRemoteRm("'.mapsafeusermach.'","'.mapsafepath.'")<cr>'
-    inoremap <buffer> <silent> <leftmouse>   <c-o><leftmouse><c-o>:call <SID>NetrwLeftmouse(0)<cr>
-    inoremap <buffer> <silent> <middlemouse> <c-o><leftmouse><c-o>:call <SID>NetrwPrevWinOpen(0)<cr>
-    inoremap <buffer> <silent> <s-leftmouse> <c-o><leftmouse><c-o>:call <SID>NetrwMarkFile(0,<SID>NetrwGetWord())<cr>
     exe 'inoremap <buffer> <silent> <rightmouse> <c-o><leftmouse><c-o>:call <SID>NetrwRemoteRm("'.mapsafeusermach.'","'.mapsafepath.'")<cr>'
    endif
    exe 'nnoremap <buffer> <silent> <del>	:call <SID>NetrwRemoteRm("'.mapsafeusermach.'","'.mapsafepath.'")<cr>'
@@ -2259,23 +2300,8 @@ fun! s:NetrwMaps(islocal)
    inoremap <buffer> <F1>			<c-o>:he netrw-quickhelp<cr>
   endif
 
-  " set up Rexplore and leftmouse-double-click
-  com! Rexplore call s:NetrwRexplore(w:netrw_rexlocal,exists("w:netrw_rexdir")? w:netrw_rexdir : ".")
-  if g:netrw_mousemaps && g:netrw_retmap
-   if !hasmapto("<Plug>NetrwReturn")
-    if maparg("<2-leftmouse>","n") == "" || maparg("<2-leftmouse>","n") =~ '^-$'
-"     call Decho("making map for 2-leftmouse")
-     nmap <unique> <silent> <2-leftmouse>	<Plug>NetrwReturn
-    elseif maparg("<c-leftmouse>","n") == ""
-"     call Decho("making map for c-leftmouse")
-     nmap <unique> <silent> <c-leftmouse>	<Plug>NetrwReturn
-    endif
-   endif
-   exe 'nnoremap <silent> <Plug>NetrwReturn :Rexplore<cr>'
-"   call Decho("made <Plug>NetrwReturn map")
-  endif
-
   keepj call s:SetRexDir(a:islocal,b:netrw_curdir)
+
 "  call Dret("s:NetrwMaps")
 endfun
 
@@ -3825,34 +3851,40 @@ fun! netrw#Explore(indx,dosplit,style,...)
   if a:dosplit || &modified || a:style == 6
 "   call Decho("case dosplit=".a:dosplit." modified=".&modified." a:style=".a:style.": dosplit or file has been modified")
    call s:SaveWinVars()
-   let winsize= g:netrw_winsize
+   let winsz= g:netrw_winsize
    if a:indx > 0
-    let winsize= a:indx
+    let winsz= a:indx
    endif
 
    if a:style == 0      " Explore, Sexplore
 "    call Decho("style=0: Explore or Sexplore")
-    exe winsize."wincmd s"
+    let winsz= (winsz*winheight(0))/100
+    exe winsz."wincmd s"
 
    elseif a:style == 1  "Explore!, Sexplore!
 "    call Decho("style=1: Explore! or Sexplore!")
-    exe winsize."wincmd v"
+    let winsz= (winsz*winheight(0))/100
+    exe winsz."wincmd v"
 
    elseif a:style == 2  " Hexplore
 "    call Decho("style=2: Hexplore")
-    exe "bel ".winsize."wincmd s"
+    let winsz= (winsz*winheight(0))/100
+    exe "bel ".winsz."wincmd s"
 
    elseif a:style == 3  " Hexplore!
 "    call Decho("style=3: Hexplore!")
-    exe "abo ".winsize."wincmd s"
+    let winsz= (winsz*winheight(0))/100
+    exe "abo ".winsz."wincmd s"
 
    elseif a:style == 4  " Vexplore
 "    call Decho("style=4: Vexplore")
-    exe "lefta ".winsize."wincmd v"
+    let winsz= (winsz*winheight(0))/100
+    exe "lefta ".winsz."wincmd v"
 
    elseif a:style == 5  " Vexplore!
 "    call Decho("style=5: Vexplore!")
-    exe "rightb ".winsize."wincmd v"
+    let winsz= (winsz*winheight(0))/100
+    exe "rightb ".winsz."wincmd v"
 
    elseif a:style == 6  " Texplore
     call s:SaveBufVars()
@@ -4796,13 +4828,13 @@ fun! s:NetrwMarkFileCopy(islocal)
 
   " sanity checks
   if !exists("s:netrwmarkfilelist_{bufnr('%')}") || empty(s:netrwmarkfilelist_{bufnr('%')})
-   keepj call netrw#ErrorMsg(2,"there are no marked files in this window (:help netrw-mf)",66)
+   keepj call netrw#ErrorMsg(s:ERROR,"there are no marked files in this window (:help netrw-mf)",66)
 "   call Dret("s:NetrwMarkFileCopy 0")
    return 0
   endif
 "  call Decho("sanity chk passed: s:netrwmarkfilelist_".bufnr('%')."<".string(s:netrwmarkfilelist_{bufnr('%')}))
   if !exists("s:netrwmftgt")
-   keepj call netrw#ErrorMsg(2,"your marked file target is empty! (:help netrw-mt)",67)
+   keepj call netrw#ErrorMsg(s:ERROR,"your marked file target is empty! (:help netrw-mt)",67)
 "   call Dret("s:NetrwMarkFileCopy 0")
    return 0
   endif
@@ -6321,7 +6353,8 @@ fun! s:NetrwSplit(mode)
   if a:mode == 0
    " remote and o
 "   call Decho("exe ".(g:netrw_alto? "bel " : "abo ").g:netrw_winsize."wincmd s")
-   exe (g:netrw_alto? "bel " : "abo ").g:netrw_winsize."wincmd s"
+   let winsz= (g:netrw_winsize*winheight(0))/100
+   exe (g:netrw_alto? "bel " : "abo ").winsz."wincmd s"
    let s:didsplit= 1
    keepj call s:RestoreWinVars()
    keepj call s:NetrwBrowse(0,s:NetrwBrowseChgDir(0,s:NetrwGetWord()))
@@ -6340,7 +6373,8 @@ fun! s:NetrwSplit(mode)
   elseif a:mode == 2
    " remote and v
 "   call Decho("exe ".(g:netrw_altv? "rightb " : "lefta ").g:netrw_winsize."wincmd v")
-   exe (g:netrw_altv? "rightb " : "lefta ").g:netrw_winsize."wincmd v"
+   let winsz= (g:netrw_winsize*winwidth(0))/100
+   exe (g:netrw_altv? "rightb " : "lefta ").winsz."wincmd v"
    let s:didsplit= 1
    keepj call s:RestoreWinVars()
    keepj call s:NetrwBrowse(0,s:NetrwBrowseChgDir(0,s:NetrwGetWord()))
@@ -6349,7 +6383,8 @@ fun! s:NetrwSplit(mode)
   elseif a:mode == 3
    " local and o
 "   call Decho("exe ".(g:netrw_alto? "bel " : "abo ").g:netrw_winsize."wincmd s")
-   exe (g:netrw_alto? "bel " : "abo ").g:netrw_winsize."wincmd s"
+   let winsz= (g:netrw_winsize*winheight(0))/100
+   exe (g:netrw_alto? "bel " : "abo ").winsz."wincmd s"
    let s:didsplit= 1
    keepj call s:RestoreWinVars()
    keepj call netrw#LocalBrowseCheck(s:NetrwBrowseChgDir(1,s:NetrwGetWord()))
@@ -6370,7 +6405,8 @@ fun! s:NetrwSplit(mode)
   elseif a:mode == 5
    " local and v
 "   call Decho("exe ".(g:netrw_altv? "rightb " : "lefta ").g:netrw_winsize."wincmd v")
-   exe (g:netrw_altv? "rightb " : "lefta ").g:netrw_winsize."wincmd v"
+   let winsz= (g:netrw_winsize*winwidth(0))/100
+   exe (g:netrw_altv? "rightb " : "lefta ").winsz."wincmd v"
    let s:didsplit= 1
    keepj call s:RestoreWinVars()
    keepj call netrw#LocalBrowseCheck(s:NetrwBrowseChgDir(1,s:NetrwGetWord()))
@@ -7004,8 +7040,8 @@ fun! s:NetrwRemoteListing()
 "     call Decho("2: exe sil r! ".listcmd)
      exe "sil! keepalt r! ".listcmd
     else
-"     call Decho("3: exe sil r! ".listcmd.' '.shellescape(s:path,1))
-     exe "sil! keepalt r! ".listcmd.' '.shellescape(s:path,1)
+"     call Decho("3: exe sil r! ".listcmd.' '.shellescape(fnameescape(s:path),1))
+     exe "sil! keepalt r! ".listcmd.' '.shellescape(fnameescape(s:path),1)
 "     call Decho("listcmd<".listcmd."> path<".s:path.">")
     endif
    endif
@@ -7456,12 +7492,12 @@ fun! s:LocalListing()
   " get the list of files contained in the current directory
   let dirname    = b:netrw_curdir
   let dirnamelen = s:Strlen(b:netrw_curdir)
-  let filelist   = glob(s:ComposePath(dirname,"*"))
+  let filelist   = glob(s:ComposePath(fnameescape(dirname),"*"))
 "  call Decho("glob(dirname<".dirname."/*>)=".filelist)
   if filelist != ""
    let filelist= filelist."\n"
   endif
-  let filelist= filelist.glob(s:ComposePath(dirname,".*"))
+  let filelist= filelist.glob(s:ComposePath(fnameescape(dirname),".*"))
 "  call Decho("glob(dirname<".dirname."/.*>)=".filelist)
 
   " Coding choice: either   elide   ./ if present
@@ -7975,7 +8011,7 @@ endfun
 "   0=note     = s:NOTE
 "   1=warning  = s:WARNING
 "   2=error    = s:ERROR
-"  Dec 03, 2009 : max errnum currently is 77
+"  Apr 18, 2011 : max errnum currently is 78
 fun! netrw#ErrorMsg(level,msg,errnum)
 "  call Dfunc("netrw#ErrorMsg(level=".a:level." msg<".a:msg."> errnum=".a:errnum.") g:netrw_use_errorwindow=".g:netrw_use_errorwindow)
 
@@ -8504,7 +8540,7 @@ endfun
 " ---------------------------------------------------------------------
 " s:RemotePathAnalysis: {{{2
 fun! s:RemotePathAnalysis(dirname)
-"  call Dfunc("s:RemotePathAnalysis()")
+"  call Dfunc("s:RemotePathAnalysis(a:dirname<".a:dirname.">)")
 
   let dirpat  = '^\(\w\{-}\)://\(\w\+@\)\=\([^/:#]\+\)\%([:#]\(\d\+\)\)\=/\(.*\)$'
   let s:method  = substitute(a:dirname,dirpat,'\1','')
@@ -9405,8 +9441,8 @@ endfun
 " Modelines: {{{1
 " vim:ts=8 fdm=marker
 doc/pi_netrw.txt	[[[1
-3630
-*pi_netrw.txt*  For Vim version 7.3.  Last change: 2011 Apr 01
+3681
+*pi_netrw.txt*  For Vim version 7.3.  Last change: 2011 May 31
 
 	    -----------------------------------------------------
 	    NETRW REFERENCE MANUAL    by Charles E. Campbell, Jr.
@@ -9681,7 +9717,7 @@ SOURCING					*netrw-source* {{{2
 	:Nsource "scp://[user@]machine[[:#]port]/path"	uses scp
 	:Nsource "sftp://[user@]machine/path"		uses sftp
 
-DIRECTORY LISTING					*netrw-dirlist* {{{2
+DIRECTORY LISTING				*netrw-trailingslash* *netrw-dirlist* {{{2
 
 	One may browse a directory to get a listing by simply attempting to
 	edit the directory: >
@@ -9689,14 +9725,15 @@ DIRECTORY LISTING					*netrw-dirlist* {{{2
 		:e scp://[user]@hostname/path/
 		:e ftp://[user]@hostname/path/
 <
-	For remote directories (ie. those using scp or ftp), that trailing
-	"/" is necessary (the slash tells netrw to treat the argument as a
-	directory to browse instead of a file to download).
+	For remote directory listings (ie. those using scp or ftp), that
+	trailing "/" is necessary (the slash tells netrw to treat the argument
+	as a directory to browse instead of as a file to download).
 
-	However, the Nread command can also be used to accomplish this:
+	The Nread command may also be used to accomplish this (again, that
+	trailing slash is necessary): >
 
-	:Nread [protocol]://[user]@hostname/path/
-
+		:Nread [protocol]://[user]@hostname/path/
+<
 					*netrw-login* *netrw-password*
 CHANGING USERID AND PASSWORD		*netrw-chgup* *netrw-userpass* {{{2
 
@@ -11566,8 +11603,8 @@ your browsing preferences.  (see also: |netrw-settings|)
   *g:netrw_mkdir_cmd*		  command for making a remote directory
 				 default: "ssh USEPORT HOSTNAME mkdir"
 
-  *g:netrw_mousemaps*		  =1 (default) enables the mouse buttons
-				   while browsing:
+  *g:netrw_mousemaps*		  =1 (default) enables mouse buttons while
+  				   browsing to:
 				     leftmouse       : open file/directory
 				     shift-leftmouse : mark file
 				     middlemouse     : same as P
@@ -11682,8 +11719,11 @@ your browsing preferences.  (see also: |netrw-settings|)
 
   *g:netrw_winsize*		  specify initial size of new windows made with
 				"o" (see |netrw-o|), "v" (see |netrw-v|),
-				|:Hexplore| or |:Vexplore|.
-				 default: ""
+				|:Hexplore| or |:Vexplore|.  The g:netrw_winsize
+				is an integer describing the percentage of the
+				current netrw buffer's window to be used for
+				the new window.
+				 default: 50  (for 50%)
 
   *g:netrw_xstrlen*		  Controls how netrw computes string lengths,
 				including multi-byte characters' string
@@ -12068,7 +12108,7 @@ Associated setting variables:	|g:netrw_chgwin|
 
 								*netrw-p11*
 	P11. I want to have two windows; a thin one on the left and my editing
-	     window on the right.  How can I do this?
+	     window on the right.  How may I accomplish this?
 
 		* Put the following line in your <.vimrc>:
 			let g:netrw_altv = 1
@@ -12114,7 +12154,45 @@ Associated setting variables:	|g:netrw_chgwin|
 	    "let g:netrw_sftp_cmd = "d:\\dev\\putty\\PSFTP.exe"
 	    "let g:netrw_scp_cmd = "d:\\dev\\putty\\PSCP.exe"
 <
+								*netrw-p14*
+	P14. I'd would like to speed up writes using Nwrite and scp/ssh
+	     style connections.  How?  (Thomer M. Gil)
 
+	     Try using ssh's ControlMaster and ControlPath (see the ssh_config
+	     man page) to share multiple ssh connections over a single network
+	     connection. That cuts out the cryptographic handshake on each
+	     file write, sometimes speeding it up by an order of magnitude.
+	     (see  http://thomer.com/howtos/netrw_ssh.html)
+	     (included by permission)
+
+	     Add the following to your ~/.ssh/config: >
+
+		 # you change "*" to the hostname you care about
+		 Host *
+		   ControlMaster auto
+		   ControlPath /tmp/%r@%h:%p
+
+<	     Then create an ssh connection to the host and leave it running: >
+
+		 ssh -N host.domain.com
+
+<	     Now remotely open a file with Vim's Netrw and enjoy the
+	     zippiness: >
+
+		vim scp://host.domain.com//home/user/.bashrc
+<
+								*netrw-p15*
+	P15. How may I use a double-click instead of netrw's usual single click
+	     to open a file or directory?  (Ben Fritz)
+
+	     First, disable netrw's mapping with >
+		    let g:netrw_mousemaps= 0
+<	     and then create a netrw buffer only mapping in
+	     $HOME/.vim/after/ftplugin/netrw.vim: >
+		    nmap <buffer> <2-leftmouse> <CR>
+<	     Note that setting g:netrw_mousemaps to zero will turn off
+	     all netrw's mouse mappings, not just the <leftmouse> one.
+	     (see |g:netrw_mousemaps|)
 
 ==============================================================================
 11. Debugging Netrw Itself				*netrw-debug* {{{1
@@ -12170,6 +12248,15 @@ which is loaded automatically at startup (assuming :set nocp).
 ==============================================================================
 12. History						*netrw-history* {{{1
 
+	v142: Apr 06, 2011 * I modified NetrwRemoteListing() to use
+			     shellescape(fnameescape(s:path),1) for
+			     the benefit of those using scp://.../
+			     with subdirectories having spaces.
+			     Problem reported by: Gilles Charron
+	      Apr 18, 2011 * s:NetrwMethod() attempts to issue an
+	      		     error message when given a malformed url
+	      Apr 29, 2011 * converted most mousemaps to use <Plug>s
+			   * |g:netrw_winsize|'s meaning changed
 	v141: Aug 28, 2010 * added -s:... support for Windows ftp
 			   * restored 2-leftmouse for :Rex-like return
 			   * added balloon help for banner
@@ -13128,7 +13215,7 @@ if !exists("did_drchip_netrwlist_syntax")
  hi default link netrwTimeSep	netrwDateSep
  hi default link netrwComma	netrwComment
  hi default link netrwHide	netrwComment
- hi default link netrwMarkFile	DiffChange
+ hi default link netrwMarkFile	TabLineSel
 
  " special syntax highlighting (see :he g:netrw_special_syntax)
  hi default link netrwBak	NonText
