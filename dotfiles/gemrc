@@ -8,4 +8,3 @@
 :backtrace: false
 :verbose: true
 :benchmark: false
-gem: --no-ri --no-rdoc
