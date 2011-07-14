@@ -126,3 +126,4 @@ if has("gui_running")
 endif 
 
 set foldmethod=manual
+let g:LustyExplorerSuppressRubyWarning = 1

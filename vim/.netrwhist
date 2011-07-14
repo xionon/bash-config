@@ -1,5 +1,5 @@
 let g:netrw_dirhistmax  =10
-let g:netrw_dirhist_cnt =8
+let g:netrw_dirhist_cnt =9
 let g:netrw_dirhist_1='/Users/alechipshear/work/intercajero/app/helpers/kiosk'
 let g:netrw_dirhist_2='/Users/alechipshear/work/ic2/app/models/intercambio'
 let g:netrw_dirhist_3='/Users/alechipshear/work/ic2/public/javascripts/dynamic_selects'
@@ -8,3 +8,4 @@ let g:netrw_dirhist_5='/Users/alechipshear/bash-config/vim/plugin'
 let g:netrw_dirhist_6='/Users/alechipshear/work/interk'
 let g:netrw_dirhist_7='/Users/alechipshear/work/interk/test'
 let g:netrw_dirhist_8='/Users/alechipshear/work/RedPost/app/views/profile'
+let g:netrw_dirhist_9='/Users/alechipshear/work/ic2'
