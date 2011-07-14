@@ -10,7 +10,6 @@ ScriptID SourceID Filename
 1624 10260 :AutoInstall: pastie.vim
 1890 15545 :AutoInstall: lusty-explorer.vim
 2136 8206 :AutoInstall: repeat.vim
-152 3342 :AutoInstall: showmarks.vim
 1658 11834 :AutoInstall: NERD_tree.vim
 2572 10433 :AutoInstall: ack.vim
 3025 15560 :AutoInstall: command-t.vim
