@@ -1,8 +1,9 @@
 let g:netrw_dirhistmax  =10
-let g:netrw_dirhist_cnt =6
-let g:netrw_dirhist_1='/Users/alechipshear/work/ic2/app/models/intercambio'
-let g:netrw_dirhist_2='/Users/alechipshear/work/ic2/config/deploy'
-let g:netrw_dirhist_3='/Users/alechipshear/.vim'
-let g:netrw_dirhist_4='/Users/alechipshear/work/RedPost/app/assets/javascripts/admin'
-let g:netrw_dirhist_5='/Users/alechipshear/.rvm/gems/ruby-1.9.2-p290@RedPost/gems/airbrake-3.0.3/lib/airbrake'
-let g:netrw_dirhist_6='/Users/alechipshear/work/RedPost'
+let g:netrw_dirhist_cnt =7
+let g:netrw_dirhist_1='/Users/alechipshear/work/redp'
+let g:netrw_dirhist_2='/Users/alechipshear/work/RedPost'
+let g:netrw_dirhist_3='/Users/alechipshear/work/ic2'
+let g:netrw_dirhist_4='/Users/alechipshear/work/cookbooks'
+let g:netrw_dirhist_5='/Users/alechipshear/work/ic2'
+let g:netrw_dirhist_6='/Users/alechipshear/work/RailsPOS'
+let g:netrw_dirhist_7='/Users/alechipshear/work/sign'
