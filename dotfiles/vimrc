@@ -29,7 +29,7 @@ set ts=2
 set shiftwidth=2
 set expandtab
 set visualbell
-set wrap
+set nowrap
 set lbr
 set ruler
 " set cursorline
@@ -92,6 +92,7 @@ map <leader>fs :set invfullscreen<CR>
 let g:showmarks_enable=1 
 let g:showmarks_include="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
+" :rtags needs to exclude some JS files that cause problems
 let g:rails_ctags_arguments='--exclude="*.*.js" --exclude="facebox.js"'
 
 autocmd FileType make     set noexpandtab
@@ -113,11 +114,14 @@ set statusline+=%P                        " percentage of file
 let g:rsenseHome = "$RSENSE_HOME"
 let g:rsenseUseOmniFunc = 1
 
+syntax enable
+
+colo Tomorrow
+
 if has("gui_running")
   set lines=160 columns=280 " Maximize gvim window.
   set guioptions-=T         " get rid of the toolbar
   set guicursor=a:blinkon0  " no blinking cursor
-  colo Tomorrow-Night
 else
   colo slate
 endif 
@@ -125,4 +129,5 @@ endif
 set foldmethod=manual
 let g:LustyExplorerSuppressRubyWarning = 1
 
-syntax enable
+call pathogen#infect()
+nnoremap ,m :w <BAR> !lessc % > %:t:r.css<CR><space>
