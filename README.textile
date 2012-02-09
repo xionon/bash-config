@@ -11,3 +11,6 @@ Command-T must also be compiled:
 $  cd ~/.vim/ruby/command-t 
 $  ruby extconf.rb 
 $  make 
+
+Make sure to import `Tomorrow Night.itermcolors` into iTerm2 on OSX. 
+Check https://github.com/ChrisKempson/Tomorrow-Theme for other applications.
