@@ -121,10 +121,9 @@ if has("gui_running")
   set lines=160 columns=280 " Maximize gvim window.
   set guioptions-=T         " get rid of the toolbar
   set guicursor=a:blinkon0  " no blinking cursor
-  colo Tomorrow-Night-Eighties
-else
-  colo slate
 endif 
+
+colo Tomorrow-Night-Eighties
 
 set foldmethod=manual
 let g:LustyExplorerSuppressRubyWarning = 1
