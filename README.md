@@ -9,6 +9,7 @@ This project contains both my VIM configs and my general Bash config files.
 
 
 Command-T must also be compiled:
+
     cd ~/.vim/ruby/command-t 
     ruby extconf.rb 
     make 
