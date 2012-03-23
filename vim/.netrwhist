@@ -1,5 +1,3 @@
 let g:netrw_dirhistmax  =10
-let g:netrw_dirhist_cnt =3
-let g:netrw_dirhist_1='/Users/alechipshear/work/ic2'
-let g:netrw_dirhist_2='/Users/alechipshear/work/ic2/app/models/transfer'
-let g:netrw_dirhist_3='/Users/alechipshear/work/ic2'
+let g:netrw_dirhist_cnt =1
+let g:netrw_dirhist_1='/Users/alechipshear/Downloads/325-backbone-on-rails-part-2/raffler-after'
