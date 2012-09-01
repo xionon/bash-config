@@ -28,7 +28,6 @@ namespace :install do
     `git config --global core.excludesfile ~/.gitignore` 
   end
 
-  # TODO: update plugins automatically?
   desc "Install vim plugins via symlink"
   task :vim do
     vim_path = File.join(home, ".vim")
