@@ -1,4 +1,5 @@
 let g:netrw_dirhistmax  =10
-let g:netrw_dirhist_cnt =2
-let g:netrw_dirhist_1='/Users/alechipshear/work/chattr'
-let g:netrw_dirhist_2='/Users/alechipshear/work/chatr/public'
+let g:netrw_dirhist_cnt =3
+let g:netrw_dirhist_1='/Users/alechipshear/work/intercambio/server'
+let g:netrw_dirhist_2='/Users/alechipshear/work/intercambio/kiosk/test'
+let g:netrw_dirhist_3='/Users/alechipshear/work/intercambio/kiosk'

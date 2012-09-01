@@ -91,6 +91,13 @@ map <leader>tl :TlistToggle<CR>
 " Quick full screen toggle
 map <leader>fs :set invfullscreen<CR>
 
+" Navigate splits with arrow keys
+nnoremap <Right> <C-w>l
+nnoremap <Left> <C-w>h
+nnoremap <Up> <C-w>k
+nnoremap <Down> <C-w>j
+
+
 " showmarks configuration
 let g:showmarks_enable=1 
 let g:showmarks_include="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
