@@ -1,24 +1,78 @@
+" Must set mapleader before vundnle loads plugins
+let mapleader = "," 
+
 set nocompatible
+filetype off                   " required!
+
+set rtp+=~/.vim/bundle/vundle/
+call vundle#rc()
+
+" let Vundle manage Vundle
+" required! 
+Bundle 'gmarik/vundle'
+
+" original repos on github
+Bundle 'tpope/vim-fugitive'
+Bundle 'tpope/vim-rails.git'
+Bundle 'tpope/vim-markdown'
+Bundle 'vim-ruby/vim-ruby'
+Bundle 'kien/ctrlp.vim'
+Bundle 'scrooloose/nerdtree'
+Bundle 'ack.vim'
+Bundle 'repeat.vim'
+Bundle 'surround.vim'
+" Bundle 'tComment'
+Bundle 'tpope/vim-commentary'
+Bundle 'matchit.zip'
+Bundle 'ruby-matchit'
+Bundle 'kshenoy/vim-signature'
+Bundle 'chriskempson/vim-tomorrow-theme'
+Bundle 'Textile-for-VIM'
+Bundle 'Puppet-Syntax-Highlighting'
+
+" Bundle 'Lokaltog/vim-easymotion'
+" Bundle 'rstacruz/sparkup', {'rtp': 'vim/'}
+
+" vim-scripts repos
+" Bundle 'L9'
+" Bundle 'FuzzyFinder'
+
+" non github repos
+" Bundle 'git://git.wincent.com/command-t.git'
+
+filetype plugin indent on     " required!
+
+" Brief help
+" :BundleList          - list configured bundles
+" :BundleInstall(!)    - install(update) bundles
+" :BundleSearch(!) foo - search(or refresh cache first) for foo
+" :BundleClean(!)      - confirm(or auto-approve) removal of unused bundles
+
+" see :h vundle for more details or wiki for FAQ
+" NOTE: comments after Bundle command are not allowed..
 
 if has("autocmd")
   au BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$")
     \| exe "normal g'\"" | endif
-endif
 
-if has("autocmd")
-  filetype indent on
-  filetype plugin on
+  "ruby
+  autocmd FileType ruby,eruby set omnifunc=rubycomplete#Complete
+  autocmd FileType ruby,eruby let g:rubycomplete_buffer_loading = 1
+  autocmd FileType ruby,eruby let g:rubycomplete_rails = 1
+  autocmd FileType ruby,eruby let g:rubycomplete_classes_in_global = 1
+  "improve autocomplete menu color
+  highlight Pmenu ctermbg=238 gui=bold
 endif
-
-set showcmd		  " Show (partial) command in status line.
+ 
+set showcmd			" Show (partial) command in status line.
 set showmatch		" Show matching brackets.
 set ignorecase
 set smartcase		" Do smart case matching
 set incsearch		" Incremental search
 set hlsearch 
 set autowrite		" Automatically save before commands like :next and :make
-set hidden      " Hide buffers when they are abandoned
-set mouse=a	  	" Enable mouse usage (all modes) in terminals
+set hidden			" Hide buffers when they are abandoned
+set mouse=a			" Enable mouse usage (all modes) in terminals
 set title
 set fileformat=unix
 set number
@@ -26,7 +80,7 @@ set number
 " set guifont=Inconsolata:h14
 " set guifont=monofur:h14
 " set guifont=Menlo:h10
-set guifont=Ubuntu\ Mono\ 10
+" set guifont=Ubuntu\ Mono\ 10
 set ts=2
 set shiftwidth=2
 set expandtab
@@ -41,22 +95,15 @@ set ruler
 set grepprg=ack
 set grepformat=%f:%l:%m
 
+" Ack for the current word
+map <leader>aw :Ack <c-r>=expand("<cword>")<CR><CR> 
+
 " make backspace work normal (indent, eol, start)
 set backspace=2
 
 " allow backspace and cursor keys to cross line boundaries
 set whichwrap+=<,>,h,l
 
-autocmd FileType ruby,eruby let g:rubycomplete_buffer_loading = 1
-autocmd FileType ruby,eruby let g:rubycomplete_rails = 1
-autocmd FileType ruby,eruby let g:rubycomplete_classes_in_global = 1
-
-let Tlist_Process_File_Always=1
-let Tlist_Show_Menu=1
-
-""""""""""""""""""""""""""
-" Keyboard Customizations"
-""""""""""""""""""""""""""
 " buffer navigation
 map <c-pagedown> :bn<enter>
 map <c-pageup> :bp<enter>
@@ -68,27 +115,12 @@ map <c-k> <c-w>k
 map <c-h> <c-w>h
 map <c-l> <c-w>l
 
-" leader commands
-let mapleader = "," 
-
 " file browsing
 map <leader>d :execute 'NERDTreeToggle ' . getcwd()<CR>
 let NERDTreeIgnore=['\.vim$', '\.pyc$', '\~$']
 
-" Ruby tests
-map <leader>R :RunAllRubyTests<CR>
-map <leader>r :RunRubyFocusedContext<CR>
-map <leader>x :!ruby %<CR>
-
-" Ack for the current word
-map <leader>aw :Ack <c-r>=expand("<cword>")<CR><CR> 
-
 " Quickly get rid of highlighting
 map <leader>nh :noh<CR>
-
-" Taglist
-map <leader>tl :TlistToggle<CR>
-
 " Quick full screen toggle
 map <leader>fs :set invfullscreen<CR>
 
@@ -98,18 +130,12 @@ nnoremap <Left> <C-w>h
 nnoremap <Up> <C-w>k
 nnoremap <Down> <C-w>j
 
-
-" showmarks configuration
-let g:showmarks_enable=1 
-let g:showmarks_include="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
-
 " :rtags needs to exclude some JS files that cause problems
 let g:rails_ctags_arguments='--exclude="*.*.js" --exclude="facebox.js"'
 
 autocmd FileType make     set noexpandtab
 
-au BufNewFile,BufRead *.todo setf todo
-
+" setup statusline
 set laststatus=2
 set statusline= 
 set statusline+=%<\                       " cut at start 
@@ -121,32 +147,18 @@ set statusline+=%1*%y%*%*\                " file type
 set statusline+=%10((%l/%L)%)\            " line and column 
 set statusline+=%P                        " percentage of file 
 
-"" Rsense configuration
-let g:rsenseHome = "$RSENSE_HOME"
-let g:rsenseUseOmniFunc = 1
-
 syntax enable
-
-if has("gui_running")
-  " set lines=160 columns=280 " Maximize gvim window.
-  set guioptions-=T         " get rid of the toolbar
-  set guicursor=a:blinkon0  " no blinking cursor
-endif 
-
 colorscheme Tomorrow-Night-Eighties
-
 set foldmethod=manual
-let g:LustyExplorerSuppressRubyWarning = 1
 
-call pathogen#infect()
-nnoremap ,m :w <BAR> !lessc % > %:t:r.css<CR><space>
-
+" Backup directories
 if filewritable(".") && ! filewritable(".backup")
   silent execute '!umask 002; mkdir .backup'
 endif
 set backupdir=./.backup,.,/tmp
 set directory=./.backup,/tmp
 
+" ctrlp settings
 let g:ctrlp_custom_ignore = {
   \ 'dir':  '\.git$\|\.hg$\|\.svn$\|tmp$\|public\/system$',
   \ 'file': '\.exe$\|\.so$\|\.dat$\|\.jpg$'

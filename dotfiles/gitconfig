@@ -38,7 +38,7 @@
   whitespace = red reverse
 
 [core]
-	excludesfile = /home/alec/.gitignore
+	excludesfile = /Users/alech/.gitignore
   whitespace=fix,-indent-with-non-tab,trailing-space,cr-at-eol
   # editor = mvim -f
   editor = vim -f
