@@ -1,5 +1,5 @@
 " Must set mapleader before vundnle loads plugins
-let mapleader = "," 
+let mapleader = ","
 
 set nocompatible
 filetype off                   " required!
@@ -8,7 +8,7 @@ set rtp+=~/.vim/bundle/vundle/
 call vundle#rc()
 
 " let Vundle manage Vundle
-" required! 
+" required!
 Bundle 'gmarik/vundle'
 
 " original repos on github
@@ -18,9 +18,11 @@ Bundle 'tpope/vim-markdown'
 Bundle 'vim-ruby/vim-ruby'
 Bundle 'kien/ctrlp.vim'
 Bundle 'scrooloose/nerdtree'
-Bundle 'ack.vim'
+" Bundle 'ack.vim'
+Bundle 'rking/ag.vim'
 Bundle 'repeat.vim'
 Bundle 'surround.vim'
+Bundle 'slim-template/vim-slim'
 " Bundle 'tComment'
 Bundle 'tpope/vim-commentary'
 Bundle 'matchit.zip'
@@ -29,6 +31,10 @@ Bundle 'kshenoy/vim-signature'
 Bundle 'chriskempson/vim-tomorrow-theme'
 Bundle 'Textile-for-VIM'
 Bundle 'Puppet-Syntax-Highlighting'
+
+Bundle 'smerrill/vcl-vim-plugin'
+
+Bundle 'Valloric/YouCompleteMe'
 
 " Bundle 'Lokaltog/vim-easymotion'
 " Bundle 'rstacruz/sparkup', {'rtp': 'vim/'}
@@ -63,13 +69,15 @@ if has("autocmd")
   "improve autocomplete menu color
   highlight Pmenu ctermbg=238 gui=bold
 endif
- 
+
+set rtp+=/usr/local/Cellar/go/1.0.3/misc/vim
+
 set showcmd			" Show (partial) command in status line.
 set showmatch		" Show matching brackets.
 set ignorecase
 set smartcase		" Do smart case matching
 set incsearch		" Incremental search
-set hlsearch 
+set hlsearch
 set autowrite		" Automatically save before commands like :next and :make
 set hidden			" Hide buffers when they are abandoned
 set mouse=a			" Enable mouse usage (all modes) in terminals
@@ -88,15 +96,15 @@ set visualbell
 set nowrap
 set lbr
 set ruler
-" set cursorline
+set cursorline
 " set cursorcolumn
 
-" ack is far superior to grep!  no seriously
-set grepprg=ack
+" The Silver Surfer is far superior to grep!  no seriously
+set grepprg=ag
 set grepformat=%f:%l:%m
 
-" Ack for the current word
-map <leader>aw :Ack <c-r>=expand("<cword>")<CR><CR> 
+" Ag for the current word
+map <leader>aw :Ag <c-r>=expand("<cword>")<CR><CR>
 
 " make backspace work normal (indent, eol, start)
 set backspace=2
@@ -116,7 +124,7 @@ map <c-h> <c-w>h
 map <c-l> <c-w>l
 
 " file browsing
-map <leader>d :execute 'NERDTreeToggle ' . getcwd()<CR>
+map <leader>t :execute 'NERDTreeToggle ' . getcwd()<CR>
 let NERDTreeIgnore=['\.vim$', '\.pyc$', '\~$']
 
 " Quickly get rid of highlighting
@@ -130,22 +138,19 @@ nnoremap <Left> <C-w>h
 nnoremap <Up> <C-w>k
 nnoremap <Down> <C-w>j
 
-" :rtags needs to exclude some JS files that cause problems
-let g:rails_ctags_arguments='--exclude="*.*.js" --exclude="facebox.js"'
-
 autocmd FileType make     set noexpandtab
 
 " setup statusline
 set laststatus=2
-set statusline= 
-set statusline+=%<\                       " cut at start 
-set statusline+=%2*[%n%H%M%R%W]%*\        " buffer number, and flags 
-set statusline+=%-40f\                    " relative path 
-set statusline+=%=                        " seperate between right- and left-aligned 
-set statusline+=%{fugitive#statusline()}\ 
-set statusline+=%1*%y%*%*\                " file type 
-set statusline+=%10((%l/%L)%)\            " line and column 
-set statusline+=%P                        " percentage of file 
+set statusline=
+set statusline+=%<\                       " cut at start
+set statusline+=%2*[%n%H%M%R%W]%*\        " buffer number, and flags
+set statusline+=%-40f\                    " relative path
+set statusline+=%=                        " seperate between right- and left-aligned
+set statusline+=%{fugitive#statusline()}\ " fugitive - git info
+set statusline+=%1*%y%*%*\                " file type
+set statusline+=%10((%l/%L)%)\            " line and column
+set statusline+=%P                        " percentage of file
 
 syntax enable
 colorscheme Tomorrow-Night-Eighties
@@ -158,9 +163,16 @@ endif
 set backupdir=./.backup,.,/tmp
 set directory=./.backup,/tmp
 
+" :rtags needs to exclude some files and directories that cause problems
+" let g:rails_ctags_arguments='--exclude="*.*.js" --exclude="facebox.js" --exclude="*protected*" --exclude="themes"'
+let g:rails_ctags_arguments='--languages=-javascript --exclude="*protected*" --exclude="themes"'
+
 " ctrlp settings
 let g:ctrlp_custom_ignore = {
-  \ 'dir':  '\.git$\|\.hg$\|\.svn$\|tmp$\|public\/system$',
+  \ 'dir':  '\.\(git\|hg\|svn\)$\|\(protected\|tmp\|public\/system\|vendor\)$',
   \ 'file': '\.exe$\|\.so$\|\.dat$\|\.jpg$'
   \ }
 
+" show invisible characters
+set list!
+set listchars=tab:▸\ ,eol:¬

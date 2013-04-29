@@ -1,3 +1,4 @@
 --type-set=haml=.haml
 --type-add=js=.coffee
 --smart-case
+--ignore-dir=vendor

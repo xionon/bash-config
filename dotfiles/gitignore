@@ -1,5 +1,5 @@
 *.swp
-tags
+tmp/tags
 tags_exclude
 .bundle
 *.lck
