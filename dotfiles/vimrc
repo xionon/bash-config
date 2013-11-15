@@ -3,6 +3,7 @@ let mapleader = ","
 
 set nocompatible
 filetype off                   " required!
+filetype plugin indent off
 
 set rtp+=~/.vim/bundle/vundle/
 call vundle#rc()
@@ -18,34 +19,27 @@ Bundle 'tpope/vim-markdown'
 Bundle 'vim-ruby/vim-ruby'
 Bundle 'kien/ctrlp.vim'
 Bundle 'scrooloose/nerdtree'
-" Bundle 'ack.vim'
 Bundle 'rking/ag.vim'
 Bundle 'repeat.vim'
 Bundle 'surround.vim'
 Bundle 'slim-template/vim-slim'
-" Bundle 'tComment'
 Bundle 'tpope/vim-commentary'
 Bundle 'matchit.zip'
 Bundle 'ruby-matchit'
 Bundle 'kshenoy/vim-signature'
 Bundle 'chriskempson/vim-tomorrow-theme'
+Bundle 'altercation/vim-colors-solarized'
 Bundle 'Textile-for-VIM'
-Bundle 'Puppet-Syntax-Highlighting'
-
+Bundle 'rodjek/vim-puppet'
+Bundle 'godlygeek/tabular'
+Bundle 'honza/vim-snippets'
+Bundle 'kchmck/vim-coffee-script'
 Bundle 'smerrill/vcl-vim-plugin'
+Bundle 'bling/vim-airline'
 
-Bundle 'Valloric/YouCompleteMe'
+set runtimepath+=$GOROOT/misc/vim
 
-" Bundle 'Lokaltog/vim-easymotion'
-" Bundle 'rstacruz/sparkup', {'rtp': 'vim/'}
-
-" vim-scripts repos
-" Bundle 'L9'
-" Bundle 'FuzzyFinder'
-
-" non github repos
-" Bundle 'git://git.wincent.com/command-t.git'
-
+syntax on
 filetype plugin indent on     " required!
 
 " Brief help
@@ -68,27 +62,25 @@ if has("autocmd")
   autocmd FileType ruby,eruby let g:rubycomplete_classes_in_global = 1
   "improve autocomplete menu color
   highlight Pmenu ctermbg=238 gui=bold
+
+  let g:airline_powerline_fonts = 1
+  set guifont=Source\ Code\ Pro\ for\ Powerline:h14
 endif
 
 set rtp+=/usr/local/Cellar/go/1.0.3/misc/vim
 
-set showcmd			" Show (partial) command in status line.
-set showmatch		" Show matching brackets.
+set showcmd      " Show (partial) command in status line.
+set showmatch    " Show matching brackets.
 set ignorecase
-set smartcase		" Do smart case matching
-set incsearch		" Incremental search
+set smartcase    " Do smart case matching
+set incsearch    " Incremental search
 set hlsearch
-set autowrite		" Automatically save before commands like :next and :make
-set hidden			" Hide buffers when they are abandoned
-set mouse=a			" Enable mouse usage (all modes) in terminals
+set autowrite    " Automatically save before commands like :next and :make
+set hidden       " Hide buffers when they are abandoned
+set mouse=a      " Enable mouse usage (all modes) in terminals
 set title
 set fileformat=unix
 set number
-" set guifont=DejaVu\ Sans\ Mono\ 8
-" set guifont=Inconsolata:h14
-" set guifont=monofur:h14
-" set guifont=Menlo:h10
-" set guifont=Ubuntu\ Mono\ 10
 set ts=2
 set shiftwidth=2
 set expandtab
@@ -98,13 +90,11 @@ set lbr
 set ruler
 set cursorline
 " set cursorcolumn
+set colorcolumn=100
 
-" The Silver Surfer is far superior to grep!  no seriously
+" Use SilverSurfer instead of grep
 set grepprg=ag
 set grepformat=%f:%l:%m
-
-" Ag for the current word
-map <leader>aw :Ag <c-r>=expand("<cword>")<CR><CR>
 
 " make backspace work normal (indent, eol, start)
 set backspace=2
@@ -123,6 +113,9 @@ map <c-k> <c-w>k
 map <c-h> <c-w>h
 map <c-l> <c-w>l
 
+" Search for the current word using SilverSurfer (ag)
+map <leader>aw :Ag <c-r>=expand("<cword>")<CR><CR>
+
 " file browsing
 map <leader>t :execute 'NERDTreeToggle ' . getcwd()<CR>
 let NERDTreeIgnore=['\.vim$', '\.pyc$', '\~$']
@@ -138,22 +131,19 @@ nnoremap <Left> <C-w>h
 nnoremap <Up> <C-w>k
 nnoremap <Down> <C-w>j
 
-autocmd FileType make     set noexpandtab
+autocmd FileType make set noexpandtab
 
-" setup statusline
+" " setup statusline
 set laststatus=2
-set statusline=
-set statusline+=%<\                       " cut at start
-set statusline+=%2*[%n%H%M%R%W]%*\        " buffer number, and flags
-set statusline+=%-40f\                    " relative path
-set statusline+=%=                        " seperate between right- and left-aligned
-set statusline+=%{fugitive#statusline()}\ " fugitive - git info
-set statusline+=%1*%y%*%*\                " file type
-set statusline+=%10((%l/%L)%)\            " line and column
-set statusline+=%P                        " percentage of file
 
-syntax enable
-colorscheme Tomorrow-Night-Eighties
+colorscheme solarized
+if has('gui_running')
+  set background=light
+else
+  " let g:solarized_termcolors=256
+  set background=dark
+endif
+
 set foldmethod=manual
 
 " Backup directories
@@ -163,7 +153,7 @@ endif
 set backupdir=./.backup,.,/tmp
 set directory=./.backup,/tmp
 
-" :rtags needs to exclude some files and directories that cause problems
+" :Rtags needs to exclude some files and directories that cause problems
 " let g:rails_ctags_arguments='--exclude="*.*.js" --exclude="facebox.js" --exclude="*protected*" --exclude="themes"'
 let g:rails_ctags_arguments='--languages=-javascript --exclude="*protected*" --exclude="themes"'
 
@@ -176,3 +166,4 @@ let g:ctrlp_custom_ignore = {
 " show invisible characters
 set list!
 set listchars=tab:▸\ ,eol:¬
+
