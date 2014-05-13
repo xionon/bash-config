@@ -15,6 +15,9 @@
   ls = ls-files
   # Show files ignored by git:
   ign = ls-files -o -i --exclude-standard
+  # show tags ordered by date
+  otags = log --tags --simplify-by-decoration --pretty='format:%h %ci %d'
+	pp = !git pull && git push && git push --tags
 
 [color]
   ui = auto

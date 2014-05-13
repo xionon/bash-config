@@ -36,6 +36,8 @@ Bundle 'honza/vim-snippets'
 Bundle 'kchmck/vim-coffee-script'
 Bundle 'smerrill/vcl-vim-plugin'
 Bundle 'bling/vim-airline'
+Bundle 'evanmiller/nginx-vim-syntax'
+Bundle 'scrooloose/syntastic'
 
 set runtimepath+=$GOROOT/misc/vim
 
@@ -64,7 +66,7 @@ if has("autocmd")
   highlight Pmenu ctermbg=238 gui=bold
 
   let g:airline_powerline_fonts = 1
-  set guifont=Source\ Code\ Pro\ for\ Powerline:h14
+  set guifont=Source\ Code\ Pro\ for\ Powerline:h12
 endif
 
 set rtp+=/usr/local/Cellar/go/1.0.3/misc/vim
@@ -85,7 +87,9 @@ set ts=2
 set shiftwidth=2
 set expandtab
 set visualbell
-set nowrap
+set wrap
+set linebreak " wrap only on word boundaries
+set nolist  " list disables linebreak
 set lbr
 set ruler
 set cursorline
@@ -115,6 +119,9 @@ map <c-l> <c-w>l
 
 " Search for the current word using SilverSurfer (ag)
 map <leader>aw :Ag <c-r>=expand("<cword>")<CR><CR>
+
+" Run current file
+map <leader>r :!clear && ruby %<CR>
 
 " file browsing
 map <leader>t :execute 'NERDTreeToggle ' . getcwd()<CR>
@@ -167,3 +174,4 @@ let g:ctrlp_custom_ignore = {
 set list!
 set listchars=tab:▸\ ,eol:¬
 
+let g:syntastic_ruby_checkers = ['mri', 'rubocop']
