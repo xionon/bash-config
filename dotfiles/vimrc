@@ -38,6 +38,7 @@ Plugin 'smerrill/vcl-vim-plugin'
 Plugin 'bling/vim-airline'
 Plugin 'evanmiller/nginx-vim-syntax'
 Plugin 'scrooloose/syntastic'
+Plugin 'mxw/vim-jsx'
 
 syntax on
 filetype plugin indent on     " required!
@@ -123,6 +124,8 @@ map <leader>aw :Ag <c-r>=expand("<cword>")<CR><CR>
 " Run current file
 map <leader>r :!clear && time ruby -Itest %<CR>
 map <leader>R :!clear && time bundle exec ruby -Itest %<CR>
+map <leader>s :!clear && time spring rake test TEST=%<CR>
+map <leader>T :!clear && time spring rake test<CR>
 
 " file browsing
 map <leader>t :execute 'NERDTreeToggle ' . getcwd()<CR>
@@ -163,7 +166,7 @@ set directory=./.backup,/tmp
 
 " :Rtags needs to exclude some files and directories that cause problems
 " let g:rails_ctags_arguments='--exclude="*.*.js" --exclude="facebox.js" --exclude="*protected*" --exclude="themes"'
-let g:rails_ctags_arguments='--languages=-javascript --exclude="*protected*" --exclude="themes"'
+let g:rails_ctags_arguments='--languages=-javascript --exclude="*protected*" --exclude="themes" --exclude="lib/themes"'
 
 " ctrlp settings
 let g:ctrlp_custom_ignore = {
