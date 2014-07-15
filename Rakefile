@@ -20,7 +20,6 @@ namespace :install do
 
       puts File.exists?(symlink_path)
     end
-
   end
 
   desc "Configure global git stuff"
@@ -36,5 +35,17 @@ namespace :install do
       File.delete(vim_path)
     end
     File.symlink full_path, vim_path
+
+    %x( git clone https://github.com/gmarik/Vundle.vim.git ~/.vim/bundle/Vundle.vim )
+    puts "To finish installing vim + vundle, run: `vim +PluginInstall +qall`"
+    
+    namespace :packages do
+      desc "Install ubuntu packages"
+      task :ubuntu do
+        %x( sudo apt-get install vim-nox )
+      end
+    end
   end
 end
+
+task :install => ["install:all"]
