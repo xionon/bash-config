@@ -147,7 +147,7 @@ autocmd FileType make set noexpandtab
 " " setup statusline
 set laststatus=2
 
-colorscheme solarized
+" colorscheme solarized
 if has('gui_running')
   set background=light
 else
