@@ -18,6 +18,7 @@
   # show tags ordered by date
   otags = log --tags --simplify-by-decoration --pretty='format:%h %ci %d'
 	pp = !git pull && git push && git push --tags
+	staged = diff --staged
 
 [color]
   ui = auto
@@ -65,3 +66,6 @@
   default = simple
 [credential]
 	helper = osxkeychain
+[filter "media"]
+	clean = git-media-clean %f
+	smudge = git-media-smudge %f
