@@ -129,7 +129,7 @@ map <c-l> <c-w>l
 map <leader>aw :Ag <c-r>=expand("<cword>")<CR><CR>
 
 " Run current file
-map <leader>r :!clear && time ruby -Itest %<CR>
+map <leader>r :w<CR>:!clear && time rake<CR>
 map <leader>R :!clear && time bundle exec ruby -Itest %<CR>
 map <leader>s :!clear && time spring rake test TEST=%<CR>
 map <leader>T :!clear && time spring rake test<CR>
@@ -159,7 +159,7 @@ if has('gui_running')
 else
   let g:solarized_termcolors=256
   set background=dark
-  colorscheme solarized
+  colorscheme Tomorrow-Night
 endif
 
 set foldmethod=manual
