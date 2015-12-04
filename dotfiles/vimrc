@@ -42,6 +42,7 @@ Plugin 'pangloss/vim-javascript'
 Plugin 'mxw/vim-jsx'
 Plugin 'othree/html5.vim'
 Plugin 'elixir-lang/vim-elixir'
+Plugin 'rust-lang/rust.vim'
 
 call vundle#end()
 syntax on
@@ -129,10 +130,12 @@ map <c-l> <c-w>l
 map <leader>aw :Ag <c-r>=expand("<cword>")<CR><CR>
 
 " Run current file
-map <leader>r :w<CR>:!clear && time rake<CR>
+map <leader>r :Rake<CR>
 map <leader>R :!clear && time bundle exec ruby -Itest %<CR>
 map <leader>s :!clear && time spring rake test TEST=%<CR>
 map <leader>T :!clear && time spring rake test<CR>
+
+map <leader>c :w<CR> :!cargo test --verbose<CR>
 
 " file browsing
 map <leader>t :execute 'NERDTreeToggle ' . getcwd()<CR>
@@ -159,7 +162,7 @@ if has('gui_running')
 else
   let g:solarized_termcolors=256
   set background=dark
-  colorscheme Tomorrow-Night
+  colorscheme Tomorrow-Night-Eighties
 endif
 
 set foldmethod=manual
