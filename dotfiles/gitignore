@@ -6,5 +6,4 @@ tags_exclude
 .backup
 *.sublime-*
 .DS_Store
-.ruby-version
 .ruby-gemset

@@ -63,7 +63,8 @@
   recentrepo = /Users/alechipshear/work/RedPost
 
 [push]
-  default = simple
+  default = current
+
 [credential]
 	helper = osxkeychain
 [filter "media"]

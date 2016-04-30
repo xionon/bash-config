@@ -1,0 +1,4 @@
+--template=~/bash-config/rails_template.rb
+--database=postgresql
+--skip-spring
+--skip-test

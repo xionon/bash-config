@@ -140,6 +140,9 @@ map <leader>c :w<CR> :!cargo test --verbose<CR>
 " file browsing
 map <leader>t :execute 'NERDTreeToggle ' . getcwd()<CR>
 let NERDTreeIgnore=['\.vim$', '\.pyc$', '\~$']
+let g:NERDTreeDirArrows = 1
+let g:NERDTreeDirArrowExpandable = '▸'
+let g:NERDTreeDirArrowCollapsible = '▾'
 
 " Quickly get rid of highlighting
 map <leader>nh :noh<CR>
