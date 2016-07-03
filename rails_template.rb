@@ -21,15 +21,18 @@ end
 gem_group :development, :test do
   gem 'factory_girl_rails'
   gem 'rspec-rails'
-  gem 'quiet_assets'
   gem 'faker'
+  unless options["skip_sprockets"] || options["api"]
+    gem 'quiet_assets'
+  end
 end
 
 after_bundle do
   generate "rspec:install", "--force"
   run("guard init")
   run("guard init rspec")
-  application <<-CODE.strip_heredoc
+  application do
+    <<-CODE
 
     config.generators do |generate|
       generate.test_framework :rspec
@@ -37,7 +40,7 @@ after_bundle do
       generate.javascript_engine false
       generate.stylesheets false
     end
-
-  CODE
+    CODE
+  end
   commit "Finish setup"
 end

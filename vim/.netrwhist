@@ -1,6 +1,8 @@
 let g:netrw_dirhistmax  =10
-let g:netrw_dirhist_cnt =4
+let g:netrw_dirhist_cnt =6
 let g:netrw_dirhist_1='/Users/alechipshear/projects/goalie/node_modules'
 let g:netrw_dirhist_2='/Users/alechipshear/projects/elixir/county/node_modules'
 let g:netrw_dirhist_3='/Users/alechipshear/projects/hulk_params/lib/hulk_params'
 let g:netrw_dirhist_4='/Users/alechipshear/.bundle'
+let g:netrw_dirhist_5='/Users/alechipshear/projects/permanent_record/app/actions/rap_sheets'
+let g:netrw_dirhist_6='/Users/alechipshear/projects/permanent_record/app/controllers/rap_sheets_controller'
