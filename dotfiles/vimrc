@@ -19,6 +19,7 @@ Plugin 'tpope/vim-markdown'
 Plugin 'vim-ruby/vim-ruby'
 Plugin 'kien/ctrlp.vim'
 Plugin 'scrooloose/nerdtree'
+Plugin 'Xuyuanp/nerdtree-git-plugin'
 Plugin 'rking/ag.vim'
 Plugin 'repeat.vim'
 Plugin 'surround.vim'
@@ -31,7 +32,8 @@ Plugin 'altercation/vim-colors-solarized'
 Plugin 'godlygeek/tabular'
 Plugin 'honza/vim-snippets'
 Plugin 'smerrill/vcl-vim-plugin'
-Plugin 'bling/vim-airline'
+Plugin 'vim-airline/vim-airline'
+Plugin 'vim-airline/vim-airline-themes'
 Plugin 'evanmiller/nginx-vim-syntax'
 Plugin 'scrooloose/syntastic'
 Plugin 'pangloss/vim-javascript'
@@ -74,8 +76,8 @@ if has("autocmd")
   highlight Pmenu ctermbg=238 gui=bold
 
   let g:airline_powerline_fonts = 1
-  " let g:airline#extensions#tabline#enabled = 1
-  " set guifont=Source\ Code\ Pro\ for\ Powerline:h12
+  let g:airline#extensions#tabline#enabled = 1
+  set guifont=Inonsolata-dz\ for\ Powerline:h14
 endif
 
 set rtp+=/usr/local/Cellar/go/1.0.3/misc/vim
