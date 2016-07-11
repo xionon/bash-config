@@ -17,6 +17,7 @@ Plugin 'tpope/vim-fugitive'
 Plugin 'tpope/vim-rails.git'
 Plugin 'tpope/vim-markdown'
 Plugin 'vim-ruby/vim-ruby'
+Plugin 'thoughtbot/vim-rspec'
 Plugin 'kien/ctrlp.vim'
 Plugin 'scrooloose/nerdtree'
 Plugin 'Xuyuanp/nerdtree-git-plugin'
@@ -196,3 +197,10 @@ set list!
 set listchars=tab:▸\ ,eol:¬
 
 let g:syntastic_ruby_checkers = ['mri', 'rubocop']
+
+map <Leader>rf :call RunCurrentSpecFile()<CR>
+map <Leader>rr :call RunNearestSpec()<CR>
+map <Leader>rl :call RunLastSpec()<CR>
+map <Leader>ra :call RunAllSpecs()<CR>
+let g:rspec_runner = "os_x_iterm2"
+
