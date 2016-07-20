@@ -60,10 +60,6 @@ filetype plugin indent on     " required!
 " see :h vundle for more details or wiki for FAQ
 " NOTE: comments after Plugin command are not allowed..
 
-set runtimepath+=$GOROOT/misc/vim
-
-au BufRead,BufNewFile *.go set filetype=go 
-
 if has("autocmd")
   au BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$")
     \| exe "normal g'\"" | endif
@@ -80,8 +76,6 @@ if has("autocmd")
   let g:airline#extensions#tabline#enabled = 1
   set guifont=Inonsolata-dz\ for\ Powerline:h14
 endif
-
-set rtp+=/usr/local/Cellar/go/1.0.3/misc/vim
 
 set showcmd      " Show (partial) command in status line.
 set showmatch    " Show matching brackets.
@@ -102,22 +96,19 @@ set visualbell
 set wrap
 set linebreak " wrap only on word boundaries
 set nolist  " list disables linebreak
+set list! " show invisible characters
+set listchars=tab:▸\ ,eol:¬,trail:-,extends:>,precedes:<,nbsp:+
 set lbr
 set ruler
 set cursorline
-" set cursorcolumn
+set cursorcolumn
 set colorcolumn=100
+set formatoptions+=j " Delete comment character when joining commented lines
+set backspace=indent,eol,start
+set whichwrap+=<,>,h,l " allow backspace and cursor keys to cross line boundaries
+set laststatus=2
+set foldmethod=manual
 
-" Use SilverSurfer instead of grep
-set grepprg=ag
-set grepformat=%f:%l:%m
-
-" make backspace work normal (indent, eol, start)
-set backspace=2
-
-" allow backspace and cursor keys to cross line boundaries
-set whichwrap+=<,>,h,l
-"
 " buffer navigation
 map <leader>n :bn<CR>
 map <leader>p :bp<CR>
@@ -129,16 +120,11 @@ map <c-k> <c-w>k
 map <c-h> <c-w>h
 map <c-l> <c-w>l
 
-" Search for the current word using SilverSurfer (ag)
-map <leader>aw :Ag <c-r>=expand("<cword>")<CR><CR>
-
-" Run current file
-map <leader>r :Rake<CR>
-map <leader>R :!clear && time bundle exec ruby -Itest %<CR>
-map <leader>s :!clear && time spring rake test TEST=%<CR>
-map <leader>T :!clear && time spring rake test<CR>
-
-map <leader>c :w<CR> :!cargo test --verbose<CR>
+map <Leader>rf :call RunCurrentSpecFile()<CR>
+map <Leader>rr :call RunNearestSpec()<CR>
+map <Leader>rl :call RunLastSpec()<CR>
+map <Leader>ra :call RunAllSpecs()<CR>
+let g:rspec_runner = "os_x_iterm2"
 
 " file browsing
 map <leader>t :execute 'NERDTreeToggle ' . getcwd()<CR>
@@ -149,8 +135,6 @@ let g:NERDTreeDirArrowCollapsible = '▾'
 
 " Quickly get rid of highlighting
 map <leader>nh :noh<CR>
-" Quick full screen toggle
-map <leader>fs :set invfullscreen<CR>
 
 " Navigate splits with arrow keys
 nnoremap <Right> <C-w>l
@@ -160,9 +144,6 @@ nnoremap <Down> <C-w>j
 
 autocmd FileType make set noexpandtab
 
-" " setup statusline
-set laststatus=2
-
 if has('gui_running')
   set background=light
 else
@@ -170,8 +151,6 @@ else
   set background=dark
   colorscheme Tomorrow-Night-Eighties
 endif
-
-set foldmethod=manual
 
 " Backup directories
 if filewritable(".") && ! filewritable(".backup")
@@ -181,26 +160,14 @@ set backupdir=./.backup,.,/tmp
 set directory=./.backup,/tmp
 
 " :Rtags needs to exclude some files and directories that cause problems
-" let g:rails_ctags_arguments='--exclude="*.*.js" --exclude="facebox.js" --exclude="*protected*" --exclude="themes"'
-let g:rails_ctags_arguments='--languages=-javascript --exclude="*protected*" --exclude="themes" --exclude="lib/themes"'
+let g:rails_ctags_arguments='--languages=-javascript'
 
 " ctrlp settings
 let g:ctrlp_custom_ignore = {
-  \ 'dir':  '\.\(git\|hg\|svn\)$\|\(protected\|tmp\|public\/system\|vendor\)$',
+  \ 'dir':  '\.\(git\|hg\|svn\)$\|\(tmp\|public\/system\|vendor\)$',
   \ 'file': '\.exe$\|\.so$\|\.dat$\|\.jpg$'
   \ }
 let g:ctrlp_working_path_mode='r'
 let g:ctrlp_user_command = ['.git/', 'git --git-dir=%s/.git ls-files -oc --exclude-standard --cached --others']
 
-" show invisible characters
-set list!
-set listchars=tab:▸\ ,eol:¬
-
 let g:syntastic_ruby_checkers = ['mri', 'rubocop']
-
-map <Leader>rf :call RunCurrentSpecFile()<CR>
-map <Leader>rr :call RunNearestSpec()<CR>
-map <Leader>rl :call RunLastSpec()<CR>
-map <Leader>ra :call RunAllSpecs()<CR>
-let g:rspec_runner = "os_x_iterm2"
-
