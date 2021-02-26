@@ -40,7 +40,7 @@ namespace :install do
       %x( git clone https://github.com/gmarik/Vundle.vim.git ~/.vim/bundle/Vundle.vim )
     end
 
-    puts "To finish installing vim + vundle, run: `vim +PluginInstall +qall`"
+    puts "To finish installing vim + vundle, run: \n`vim +PluginInstall +qall`"
   end
 
   namespace :packages do
