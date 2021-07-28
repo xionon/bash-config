@@ -17,8 +17,8 @@
   ign = ls-files -o -i --exclude-standard
   # show tags ordered by date
   otags = log --tags --simplify-by-decoration --pretty='format:%h %ci %d'
-	pp = !git pull && git push && git push --tags
-	staged = diff --staged
+  pp = !git pull && git push && git push --tags
+  staged = diff --staged
 
 [color]
   ui = auto
@@ -43,7 +43,7 @@
   whitespace = red reverse
 
 [core]
-	excludesfile = /Users/ahipshear/.gitignore
+	excludesfile = /Users/alec.hipshear/.gitignore
   whitespace=fix,-indent-with-non-tab,trailing-space,cr-at-eol
   editor = vim -f
 
@@ -66,11 +66,12 @@
   default = current
 
 [credential]
-	helper = osxkeychain
+  helper = osxkeychain
+
 [filter "media"]
-	clean = git-media-clean %f
-	smudge = git-media-smudge %f
+  clean = git-media-clean %f
+  smudge = git-media-smudge %f
 
 [init]
-	defaultBranch = main
-	templateDir = /Users/alechipshear/.git-template
+  defaultBranch = main
+  templateDir = /Users/alechipshear/.git-template

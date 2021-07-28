@@ -1,3 +1,5 @@
+require 'fileutils'
+
 def home
   File.expand_path("~")
 end
@@ -12,14 +14,12 @@ namespace :install do
       full_path = File.expand_path(f)
       symlink_path = File.join(home, "." + File.basename(f))
 
-      print symlink_path + " --- "
+      print symlink_path
 
-      if(File.exists?(symlink_path))
-        puts "already exists! Not symlinking #{full_path}"
-      else
+      unless(File.exists?(symlink_path))
         File.symlink(full_path, symlink_path)
-        puts File.exists?(symlink_path)
       end
+      puts " \xE2\x9C\x94\n"
     end
   end
 
@@ -30,13 +30,9 @@ namespace :install do
 
   desc "Install vim plugins via symlink"
   task :vim do
-    vim_path = File.join(home, ".vim")
-    full_path = File.expand_path("./vim")
+    FileUtils.mkdir_p File.join(home, ".vim", "bundle")
 
-    if(File.exists?(vim_path))
-      puts "#{vim_path} already exists! Not symlinking #{full_path}"
-    else
-      File.symlink full_path, vim_path
+    unless File.exist?(File.join(home, ".vim", "bundle", "Vundle.vim"))
       %x( git clone https://github.com/gmarik/Vundle.vim.git ~/.vim/bundle/Vundle.vim )
     end
 
@@ -52,3 +48,4 @@ namespace :install do
 end
 
 task :install => ["install:all"]
+task default: :install
