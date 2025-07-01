@@ -1,150 +1,146 @@
-" Must set mapleader before vundnle loads plugins
+" Modern Vim configuration
+" Use vim-plug for plugin management
+
+" Set leader key
 let mapleader = "\\"
 
+" Basic settings
 set nocompatible
-filetype off                   " required!
+set encoding=utf-8
+set fileencoding=utf-8
+set termencoding=utf-8
 
-" set rtp+=~/.vim/bundle/vundle/
-set rtp+=~/.vim/bundle/Vundle.vim
-call vundle#begin()
+" Plugin management with vim-plug
+call plug#begin('~/.vim/plugged')
 
-" let Vundle manage Vundle
-" required!
-Plugin 'gmarik/Vundle.vim'
+" Essential plugins
+Plug 'tpope/vim-fugitive'                    " Git integration
+Plug 'tpope/vim-rails'                       " Rails support
+Plug 'tpope/vim-markdown'                    " Markdown support
+Plug 'vim-ruby/vim-ruby'                     " Ruby syntax
+Plug 'thoughtbot/vim-rspec'                  " RSpec integration
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }  " Fuzzy finder (replaces ctrlp)
+Plug 'junegunn/fzf.vim'                      " FZF integration
+Plug 'scrooloose/nerdtree'                   " File explorer
+Plug 'Xuyuanp/nerdtree-git-plugin'           " Git status in NERDTree
+Plug 'rking/ag.vim'                          " Silver searcher
+Plug 'tpope/vim-surround'                    " Surround text objects
+Plug 'tpope/vim-commentary'                  " Comment/uncomment
+Plug 'kshenoy/vim-signature'                 " Show marks
+Plug 'vim-airline/vim-airline'               " Status line
+Plug 'vim-airline/vim-airline-themes'        " Airline themes
+Plug 'dense-analysis/ale'                    " Linting (replaces syntastic)
+Plug 'pangloss/vim-javascript'               " JavaScript syntax
+Plug 'mxw/vim-jsx'                           " JSX support
+Plug 'othree/html5.vim'                      " HTML5 support
+Plug 'elixir-lang/vim-elixir'                " Elixir support
+Plug 'rust-lang/rust.vim'                    " Rust support
+Plug 'aklt/plantuml-syntax'                  " PlantUML syntax
 
-" original repos on github
-Plugin 'tpope/vim-fugitive'
-Plugin 'tpope/vim-rails.git'
-Plugin 'tpope/vim-markdown'
-Plugin 'vim-ruby/vim-ruby'
-Plugin 'thoughtbot/vim-rspec'
-Plugin 'kien/ctrlp.vim'
-Plugin 'scrooloose/nerdtree'
-Plugin 'Xuyuanp/nerdtree-git-plugin'
-Plugin 'rking/ag.vim'
-Plugin 'repeat.vim'
-Plugin 'surround.vim'
-Plugin 'tpope/vim-commentary'
-Plugin 'matchit.zip'
-Plugin 'ruby-matchit'
-Plugin 'kshenoy/vim-signature'
-Plugin 'chriskempson/vim-tomorrow-theme'
-Plugin 'altercation/vim-colors-solarized'
-Plugin 'godlygeek/tabular'
-Plugin 'honza/vim-snippets'
-Plugin 'smerrill/vcl-vim-plugin'
-Plugin 'vim-airline/vim-airline'
-Plugin 'vim-airline/vim-airline-themes'
-Plugin 'scrooloose/syntastic'
-Plugin 'pangloss/vim-javascript'
-Plugin 'mxw/vim-jsx'
-Plugin 'othree/html5.vim'
-Plugin 'elixir-lang/vim-elixir'
-Plugin 'rust-lang/rust.vim'
-Plugin 'aklt/plantuml-syntax'
+" Color schemes
+Plug 'chriskempson/vim-tomorrow-theme'
+Plug 'altercation/vim-colors-solarized'
 
-" Plugin 'rodjek/vim-puppet'
-" Plugin 'slim-template/vim-slim'
-" Plugin 'Textile-for-VIM'
-" Plugin 'kchmck/vim-coffee-script'
-call vundle#end()
+call plug#end()
+
+" Enable syntax highlighting and file type detection
 syntax on
-filetype plugin indent on     " required!
+filetype plugin indent on
 
-" Brief help
-" :PluginList          - list configured bundles
-" :PluginInstall(!)    - install(update) bundles
-" :PluginSearch(!) foo - search(or refresh cache first) for foo
-" :PluginClean(!)      - confirm(or auto-approve) removal of unused bundles
-
-" see :h vundle for more details or wiki for FAQ
-" NOTE: comments after Plugin command are not allowed..
-
+" Restore cursor position
 if has("autocmd")
   au BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$")
     \| exe "normal g'\"" | endif
+endif
 
-  "ruby
+" Ruby configuration
+if has("autocmd")
   autocmd FileType ruby,eruby set omnifunc=rubycomplete#Complete
   autocmd FileType ruby,eruby let g:rubycomplete_buffer_loading = 1
   autocmd FileType ruby,eruby let g:rubycomplete_rails = 1
   autocmd FileType ruby,eruby let g:rubycomplete_classes_in_global = 1
-  "improve autocomplete menu color
-  highlight Pmenu ctermbg=238 gui=bold
-
-  let g:airline_powerline_fonts = 1
-  let g:airline#extensions#tabline#enabled = 1
-  set guifont=Inonsolata-dz\ for\ Powerline:h14
 endif
 
-set showcmd      " Show (partial) command in status line.
-set showmatch    " Show matching brackets.
-set ignorecase
-set smartcase    " Do smart case matching
-set incsearch    " Incremental search
-set hlsearch
-set autowrite    " Automatically save before commands like :next and :make
-set hidden       " Hide buffers when they are abandoned
-set mouse=a      " Enable mouse usage (all modes) in terminals
-set title
-set fileformat=unix
-set number
-set ts=2
-set shiftwidth=2
-set expandtab
-set visualbell
-set wrap
-set linebreak " wrap only on word boundaries
-set nolist  " list disables linebreak
-set list! " show invisible characters
-set listchars=tab:▸\ ,eol:¬,trail:-,extends:>,precedes:<,nbsp:+
-set lbr
-set ruler
-set cursorline
-set cursorcolumn
-set colorcolumn=100
-set formatoptions+=j " Delete comment character when joining commented lines
-set backspace=indent,eol,start
-set whichwrap+=<,>,h,l " allow backspace and cursor keys to cross line boundaries
-set laststatus=2
-set foldmethod=manual
+" Airline configuration
+let g:airline_powerline_fonts = 1
+let g:airline#extensions#tabline#enabled = 1
+if has('gui_running')
+  set guifont=Inconsolata-dz\ for\ Powerline:h14
+endif
 
-" buffer navigation
+" Basic editor settings
+set showcmd                    " Show (partial) command in status line
+set showmatch                  " Show matching brackets
+set ignorecase                 " Case insensitive search
+set smartcase                  " Do smart case matching
+set incsearch                  " Incremental search
+set hlsearch                   " Highlight search results
+set autowrite                  " Automatically save before commands
+set hidden                     " Hide buffers when abandoned
+set mouse=a                    " Enable mouse usage
+set title                      " Show filename in title
+set fileformat=unix            " Use Unix line endings
+set number                     " Show line numbers
+set ts=2                       " Tab stop
+set shiftwidth=2               " Indent width
+set expandtab                  " Use spaces instead of tabs
+set visualbell                 " Use visual bell
+set wrap                       " Wrap long lines
+set linebreak                  " Wrap only on word boundaries
+set nolist                     " Don't show invisible characters by default
+set ruler                      " Show cursor position
+set cursorline                 " Highlight current line
+set cursorcolumn               " Highlight current column
+set colorcolumn=100            " Show column guide at 100
+set formatoptions+=j           " Delete comment char when joining lines
+set backspace=indent,eol,start " Allow backspace over everything
+set whichwrap+=<,>,h,l         " Allow cursor to wrap
+set laststatus=2               " Always show status line
+set foldmethod=manual          " Manual folding
+
+" Show invisible characters when toggled
+set listchars=tab:▸\ ,eol:¬,trail:-,extends:>,precedes:<,nbsp:+
+
+" Buffer navigation
 map <leader>n :bn<CR>
 map <leader>p :bp<CR>
 map <C-del> :bd<CR>
 
-" navigate window splits
+" Window navigation
 map <c-j> <c-w>j
 map <c-k> <c-w>k
 map <c-h> <c-w>h
 map <c-l> <c-w>l
 
+" RSpec integration
 map <Leader>rf :call RunCurrentSpecFile()<CR>
 map <Leader>rr :call RunNearestSpec()<CR>
 map <Leader>rl :call RunLastSpec()<CR>
 map <Leader>ra :call RunAllSpecs()<CR>
 let g:rspec_runner = "os_x_iterm2"
 
-" file browsing
+" NERDTree configuration
 map <leader>t :execute 'NERDTreeToggle ' . getcwd()<CR>
-let NERDTreeIgnore=['\.vim$', '\.pyc$', '\~$']
+let NERDTreeIgnore=['\.vim$', '\.pyc$', '\~$', '\.DS_Store$']
 let g:NERDTreeDirArrows = 1
 let g:NERDTreeDirArrowExpandable = '▸'
 let g:NERDTreeDirArrowCollapsible = '▾'
 
-" Quickly get rid of highlighting
+" FZF configuration (replaces ctrlp)
+map <leader>f :Files<CR>
+map <leader>b :Buffers<CR>
+map <leader>g :Ag<CR>
+
+" Clear search highlighting
 map <leader>nh :noh<CR>
 
-" Navigate splits with arrow keys
-nnoremap <Right> <C-w>l
-nnoremap <Left> <C-w>h
-nnoremap <Up> <C-w>k
-nnoremap <Down> <C-w>j
+" Quick escape
 inoremap jk <Esc>
 
+" File type specific settings
 autocmd FileType make set noexpandtab
 
+" Color scheme
 if has('gui_running')
   set background=light
 else
@@ -153,23 +149,30 @@ else
   colorscheme Tomorrow-Night-Eighties
 endif
 
-" Backup directories
+" Backup settings
 if filewritable(".") && ! filewritable(".backup")
   silent execute '!umask 002; mkdir .backup'
 endif
 set backupdir=./.backup,.,/tmp
 set directory=./.backup,/tmp
 
-" :Rtags needs to exclude some files and directories that cause problems
-let g:rails_ctags_arguments='--languages=-javascript'
+" ALE (linter) configuration
+let g:ale_linters = {
+\   'ruby': ['rubocop', 'ruby'],
+\   'javascript': ['eslint'],
+\   'typescript': ['eslint', 'tsserver'],
+\   'python': ['flake8', 'pylint'],
+\}
 
-" ctrlp settings
-let g:ctrlp_custom_ignore = {
-  \ 'dir':  '\.\(git\|hg\|svn\)$\|\(tmp\|public\/system\|vendor\)$',
-  \ 'file': '\.exe$\|\.so$\|\.dat$\|\.jpg$'
-  \ }
-let g:ctrlp_working_path_mode='r'
-let g:ctrlp_user_command = ['.git/', 'git --git-dir=%s/.git ls-files -oc --exclude-standard --cached --others']
+let g:ale_fixers = {
+\   'ruby': ['rubocop'],
+\   'javascript': ['eslint'],
+\   'typescript': ['eslint'],
+\   'python': ['black', 'isort'],
+\}
 
-let g:syntastic_ruby_checkers = ['mri', 'rubocop']
-inoremap jk <Esc>
+let g:ale_sign_column_always = 1
+let g:ale_set_highlights = 1
+
+" Highlight Pmenu for better autocomplete
+highlight Pmenu ctermbg=238 gui=bold

@@ -28,21 +28,39 @@ namespace :install do
     `git config --global core.excludesfile ~/.gitignore`
   end
 
-  desc "Install vim plugins via symlink"
+  desc "Install vim plugins via vim-plug"
   task :vim do
-    FileUtils.mkdir_p File.join(home, ".vim", "bundle")
+    # Create vim directories
+    FileUtils.mkdir_p File.join(home, ".vim", "autoload")
+    FileUtils.mkdir_p File.join(home, ".vim", "plugged")
 
-    unless File.exist?(File.join(home, ".vim", "bundle", "Vundle.vim"))
-      %x( git clone https://github.com/gmarik/Vundle.vim.git ~/.vim/bundle/Vundle.vim )
+    # Install vim-plug if not already installed
+    plug_path = File.join(home, ".vim", "autoload", "plug.vim")
+    unless File.exist?(plug_path)
+      puts "Installing vim-plug..."
+      %x( curl -fLo #{plug_path} --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim )
+      puts "✓ vim-plug installed"
+    else
+      puts "✓ vim-plug already installed"
     end
 
-    puts "To finish installing vim + vundle, run: \n`vim +PluginInstall +qall`"
+    puts "\nTo finish installing vim plugins, run: \n`vim +PlugInstall +qall`"
+    puts "Or open vim and run: :PlugInstall"
   end
 
   namespace :packages do
-    desc "Install ubuntu packages"
+    desc "Install ubuntu packages (Ubuntu only)"
     task :ubuntu do
-      %x( sudo apt-get install vim-nox )
+      # Check if running on Ubuntu
+      unless system("lsb_release -a 2>/dev/null | grep -q Ubuntu")
+        puts "Skipping Ubuntu package installation - not running on Ubuntu"
+        next
+      end
+
+      puts "Installing modern Vim packages..."
+      %x( sudo apt-get update )
+      %x( sudo apt-get install -y vim-gtk3 neovim curl git )
+      puts "✓ Modern Vim packages installed"
     end
   end
 end

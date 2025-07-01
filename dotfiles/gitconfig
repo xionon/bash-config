@@ -43,24 +43,13 @@
   whitespace = red reverse
 
 [core]
-	excludesfile = /Users/alec.hipshear/.gitignore
+	excludesfile = /Users/alechipshear/.gitignore
   whitespace=fix,-indent-with-non-tab,trailing-space,cr-at-eol
   editor = vim -f
 
 [user]
   name = Alec Hipshear
   email = alechipshear@gmail.com
-
-[difftool "sourcetree"]
-  cmd = opendiff \"$LOCAL\" \"$REMOTE\"
-  path = 
-
-[mergetool "sourcetree"]
-  cmd = /Applications/SourceTree.app/Contents/Resources/opendiff-w.sh \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\"
-  trustExitCode = true
-
-[gui]
-  recentrepo = /Users/alechipshear/work/RedPost
 
 [push]
   default = current
