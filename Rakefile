@@ -6,7 +6,7 @@ end
 
 namespace :install do
   desc "Install symlinks and vim plugins"
-  task :all => [:gitconfig, :vim]
+  task :all => [:gitconfig, :vim, :nvim]
 
   desc "Symlink dotfiles from the home directory to the dotfiles directory"
   task :dotfiles do
@@ -46,6 +46,30 @@ namespace :install do
 
     puts "\nTo finish installing vim plugins, run: \n`vim +PlugInstall +qall`"
     puts "Or open vim and run: :PlugInstall"
+  end
+
+  desc "Install nvim with lazy.nvim plugin manager"
+  task :nvim do
+    # Create nvim config directory
+    nvim_config_dir = File.join(home, ".config", "nvim")
+    FileUtils.mkdir_p nvim_config_dir
+
+    # Symlink nvim config
+    nvim_source = File.expand_path("./dotfiles/nvim")
+    unless File.exist?(File.join(nvim_config_dir, "init.lua"))
+      Dir.glob("#{nvim_source}/*").each do |f|
+        target = File.join(nvim_config_dir, File.basename(f))
+        unless File.exist?(target)
+          File.symlink(f, target)
+        end
+      end
+      puts "✓ nvim config symlinked"
+    else
+      puts "✓ nvim config already exists"
+    end
+
+    puts "\nTo finish installing nvim plugins, run: \n`nvim --headless '+Lazy! sync' +qa`"
+    puts "Or open nvim and plugins will auto-install"
   end
 
   namespace :packages do
