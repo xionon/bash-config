@@ -1,9 +1,0 @@
-*.swp
-tmp/tags
-tags_exclude
-.bundle
-*.lck
-.backup
-*.sublime-*
-.DS_Store
-.ruby-gemset

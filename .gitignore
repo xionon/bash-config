@@ -1,9 +1,9 @@
+*.swp
+tmp/tags
+tags_exclude
+.bundle
+*.lck
+.backup
+*.sublime-*
 .DS_Store
-vim/ruby/command-t/Makefile
-vim/ruby/command-t/ext.bundle
-vim/ruby/command-t/ext.o
-vim/ruby/command-t/match.o
-vim/ruby/command-t/matcher.o
-vim/ruby/command-t/mkmf.log
-vim/ruby/command-t/ext.so
-vim/bundle/*
+.ruby-gemset

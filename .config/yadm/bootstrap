@@ -1,0 +1,123 @@
+#!/bin/bash
+
+# YADM Bootstrap Script
+# This script runs after yadm clone to set up the environment
+
+set -e
+
+echo "🚀 Running yadm bootstrap..."
+
+# Detect OS
+OS="$(uname -s)"
+
+# Set up git configuration
+echo "📝 Setting up git configuration..."
+git config --global core.excludesfile ~/.gitignore
+
+# Install vim-plug for vim
+install_vim_plug() {
+    echo "📦 Installing vim-plug..."
+    mkdir -p ~/.vim/autoload ~/.vim/plugged
+    
+    if [ ! -f ~/.vim/autoload/plug.vim ]; then
+        curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
+            https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+        echo "✅ vim-plug installed"
+    else
+        echo "✅ vim-plug already installed"
+    fi
+    
+    echo "To finish installing vim plugins, run: vim +PlugInstall +qall"
+}
+
+# Install packages based on OS
+install_packages() {
+    echo "📦 Installing packages for $OS..."
+    
+    case "$OS" in
+        Darwin*)
+            # macOS
+            if command -v brew >/dev/null 2>&1; then
+                echo "Installing packages via Homebrew..."
+                # Only install if not already present
+                command -v nvim >/dev/null 2>&1 || brew install neovim
+                command -v git >/dev/null 2>&1 || brew install git
+                command -v curl >/dev/null 2>&1 || brew install curl
+                echo "✅ macOS packages installed"
+            else
+                echo "⚠️  Homebrew not found. Please install manually:"
+                echo "   - neovim"
+                echo "   - git" 
+                echo "   - curl"
+            fi
+            ;;
+        Linux*)
+            # Linux
+            if command -v apt-get >/dev/null 2>&1; then
+                # Ubuntu/Debian
+                if lsb_release -a 2>/dev/null | grep -q Ubuntu; then
+                    echo "Installing packages via apt-get..."
+                    sudo apt-get update
+                    sudo apt-get install -y vim-gtk3 neovim curl git
+                    echo "✅ Ubuntu packages installed"
+                fi
+            elif command -v yum >/dev/null 2>&1; then
+                # CentOS/RHEL
+                echo "Installing packages via yum..."
+                sudo yum install -y vim neovim curl git
+                echo "✅ CentOS/RHEL packages installed"
+            elif command -v pacman >/dev/null 2>&1; then
+                # Arch Linux
+                echo "Installing packages via pacman..."
+                sudo pacman -S --needed vim neovim curl git
+                echo "✅ Arch Linux packages installed"
+            else
+                echo "⚠️  Unknown Linux distribution. Please install manually:"
+                echo "   - vim or neovim"
+                echo "   - git"
+                echo "   - curl"
+            fi
+            ;;
+        *)
+            echo "⚠️  Unknown OS: $OS. Please install manually:"
+            echo "   - vim or neovim"
+            echo "   - git"
+            echo "   - curl"
+            ;;
+    esac
+}
+
+# Set up neovim
+setup_neovim() {
+    echo "⚙️  Setting up neovim..."
+    
+    if command -v nvim >/dev/null 2>&1; then
+        echo "Installing nvim plugins with lazy.nvim..."
+        # Run nvim headlessly to install plugins
+        nvim --headless "+Lazy! sync" +qa 2>/dev/null || true
+        echo "✅ neovim plugins installed"
+        echo "Note: Some plugins may need to finish installing on first nvim launch"
+    else
+        echo "⚠️  neovim not found. Please install neovim first."
+    fi
+}
+
+# Main installation flow
+main() {
+    install_packages
+    install_vim_plug
+    setup_neovim
+    
+    echo ""
+    echo "🎉 Bootstrap complete!"
+    echo ""
+    echo "Next steps:"
+    echo "1. Open vim and run :PlugInstall to finish vim plugin installation"
+    echo "2. Open nvim - plugins should auto-install on first launch"
+    echo "3. Restart your terminal to pick up any shell changes"
+    echo ""
+    echo "Enjoy your dotfiles! 🚀"
+}
+
+# Run main function
+main
