@@ -110,6 +110,14 @@ require("lazy").setup({
       vim.cmd.colorscheme("tokyonight-night")
     end,
   },
+  
+  -- Tomorrow Night Eighties theme
+  {
+    "chriskempson/tomorrow-theme",
+    config = function()
+      vim.cmd.colorscheme("Tomorrow-Night-Eighties")
+    end,
+  },
 
   -- File explorer
   {
