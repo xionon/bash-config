@@ -10,9 +10,113 @@ echo "🚀 Running yadm bootstrap..."
 # Detect OS
 OS="$(uname -s)"
 
+# Check if running in WSL
+is_wsl() {
+    [ -n "${WSL_DISTRO_NAME}" ] || [ -n "${WSLENV}" ] || [ -f /proc/sys/fs/binfmt_misc/WSLInterop ]
+}
+
 # Set up git configuration
 echo "📝 Setting up git configuration..."
 git config --global core.excludesfile ~/.gitignore
+
+# Install Nerd Fonts for proper icon display
+install_nerd_fonts() {
+    echo "🔤 Installing Nerd Fonts..."
+    
+    case "$OS" in
+        Darwin*)
+            if command -v brew >/dev/null 2>&1; then
+                echo "Installing Nerd Fonts via Homebrew..."
+                local fonts=(
+                    "font-hack-nerd-font"
+                    "font-inconsolata-go-nerd-font"
+                    "font-fira-code-nerd-font"
+                    "font-fantasque-sans-mono-nerd-font"
+                    "font-departure-mono-nerd-font"
+                    "font-bigblue-terminal-nerd-font"
+                    "font-caskaydia-cove-nerd-font"
+                )
+                
+                for font in "${fonts[@]}"; do
+                    if ! brew list --cask "$font" >/dev/null 2>&1; then
+                        echo "Installing $font..."
+                        brew install --cask "$font"
+                    else
+                        echo "✅ $font already installed"
+                    fi
+                done
+                echo "✅ Nerd Fonts installed"
+                echo "📝 Remember to set your terminal font to a Nerd Font (e.g., 'Hack Nerd Font Mono')"
+            else
+                echo "⚠️  Homebrew not found. Please install Nerd Fonts manually from:"
+                echo "   https://github.com/ryanoasis/nerd-fonts"
+            fi
+            ;;
+        Linux*)
+            if is_wsl; then
+                echo "🔤 WSL detected - installing fonts for Windows terminal access..."
+                echo ""
+                echo "📝 WSL Font Setup Instructions:"
+                echo "1. Download and install Nerd Fonts on Windows host:"
+                echo "   - Go to: https://github.com/ryanoasis/nerd-fonts/releases"
+                echo "   - Download and install these fonts:"
+                echo "     • Hack.zip"
+                echo "     • InconsolataGo.zip"
+                echo "     • FiraCode.zip"
+                echo "     • FantasqueSansMono.zip"
+                echo "     • DepartureMono.zip"
+                echo "     • BigBlueTerminal.zip"
+                echo "     • CascadiaCode.zip"
+                echo ""
+                echo "2. In Windows Terminal:"
+                echo "   - Open Settings (Ctrl+,)"
+                echo "   - Go to your WSL profile"
+                echo "   - Under Appearance → Font face, select a Nerd Font"
+                echo "   - Recommended: 'Hack Nerd Font Mono'"
+                echo ""
+                echo "3. If using VSCode with WSL:"
+                echo "   - Install fonts on Windows (step 1)"
+                echo "   - In VSCode settings, set terminal font to a Nerd Font"
+                echo ""
+                echo "⚠️  Fonts must be installed on Windows host, not in WSL!"
+            else
+                echo "Installing Nerd Fonts on Linux..."
+                mkdir -p ~/.local/share/fonts
+                cd ~/.local/share/fonts
+                
+                # Download and install all requested Nerd Fonts
+                local fonts=(
+                    "https://github.com/ryanoasis/nerd-fonts/releases/download/v3.4.0/Hack.zip"
+                    "https://github.com/ryanoasis/nerd-fonts/releases/download/v3.4.0/InconsolataGo.zip"
+                    "https://github.com/ryanoasis/nerd-fonts/releases/download/v3.4.0/FiraCode.zip"
+                    "https://github.com/ryanoasis/nerd-fonts/releases/download/v3.4.0/FantasqueSansMono.zip"
+                    "https://github.com/ryanoasis/nerd-fonts/releases/download/v3.4.0/DepartureMono.zip"
+                    "https://github.com/ryanoasis/nerd-fonts/releases/download/v3.4.0/BigBlueTerminal.zip"
+                    "https://github.com/ryanoasis/nerd-fonts/releases/download/v3.4.0/CascadiaCode.zip"
+                )
+                
+                for font_url in "${fonts[@]}"; do
+                    font_name=$(basename "$font_url" .zip)
+                    if [ ! -d "$font_name" ]; then
+                        echo "Downloading $font_name..."
+                        curl -fLo "$font_name.zip" "$font_url"
+                        unzip -q "$font_name.zip" -d "$font_name"
+                        rm "$font_name.zip"
+                    fi
+                done
+                
+                # Refresh font cache
+                fc-cache -fv
+                echo "✅ Nerd Fonts installed"
+                echo "📝 Remember to set your terminal font to a Nerd Font (e.g., 'Hack Nerd Font Mono')"
+            fi
+            ;;
+        *)
+            echo "⚠️  Please install Nerd Fonts manually from:"
+            echo "   https://github.com/ryanoasis/nerd-fonts"
+            ;;
+    esac
+}
 
 # Install vim-plug for vim
 install_vim_plug() {
@@ -105,6 +209,7 @@ setup_neovim() {
 # Main installation flow
 main() {
     install_packages
+    install_nerd_fonts
     install_vim_plug
     setup_neovim
     
