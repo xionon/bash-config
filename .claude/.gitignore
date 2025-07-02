@@ -1,0 +1,17 @@
+# Ignore sensitive configuration
+settings.local.json
+**/secrets.json
+**/api-keys.txt
+**/.env
+
+# Ignore temporary files
+*.tmp
+*.log
+.DS_Store
+
+# Keep structure but ignore personal customizations
+# You may want to commit settings.json for team sharing
+statsig
+todos
+projects
+local

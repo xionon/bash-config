@@ -1,0 +1,11 @@
+{
+  "temperature": 0.1,
+  "env": {
+    "PROJECT_TYPE": "development"
+  },
+  "hooks": {
+    "afterWrite": [
+      "echo 'File modified by Claude Code'"
+    ]
+  }
+}
