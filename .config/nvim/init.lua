@@ -1,6 +1,6 @@
 -- Basic settings
 vim.opt.number = true
-vim.opt.relativenumber = true
+vim.opt.relativenumber = false
 vim.opt.expandtab = true
 vim.opt.tabstop = 2
 vim.opt.shiftwidth = 2
@@ -110,12 +110,11 @@ require("lazy").setup({
       vim.cmd.colorscheme("tokyonight-night")
     end,
   },
-  
-  -- Tomorrow Night Eighties theme
+
   {
-    "chriskempson/tomorrow-theme",
+    "chriskempson/vim-tomorrow-theme",
     config = function()
-      vim.cmd.colorscheme("Tomorrow-Night-Eighties")
+      vim.cmd.colorscheme("tomorrow-night-eighties")
     end,
   },
 
