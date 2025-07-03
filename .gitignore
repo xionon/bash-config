@@ -7,3 +7,4 @@ tags_exclude
 *.sublime-*
 .DS_Store
 .ruby-gemset
+.DS_Store
