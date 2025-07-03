@@ -43,7 +43,7 @@
   whitespace = red reverse
 
 [core]
-	excludesfile = /Users/alechipshear/.gitignore
+  excludesfile = ~/.gitignore
   whitespace=fix,-indent-with-non-tab,trailing-space,cr-at-eol
   editor = vim -f
 
@@ -63,4 +63,6 @@
 
 [init]
   defaultBranch = main
-  templateDir = /Users/alechipshear/.git-template
+
+[pager]
+	grep = less -FRX
