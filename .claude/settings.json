@@ -1,7 +1,5 @@
 {
   "model": "claude-sonnet-4-20250514",
-  "temperature": 0.1,
-  "maxTokens": 4096,
   "permissions": {
     "allow": [
       "Read(*)",
@@ -11,9 +9,5 @@
   },
   "env": {
     "CLAUDE_CODE_ENABLE_TELEMETRY": "1"
-  },
-  "hooks": {
-    "beforeWrite": [],
-    "afterWrite": []
   }
 }
