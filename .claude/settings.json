@@ -1,13 +1,13 @@
 {
-  "model": "claude-sonnet-4-20250514",
+  "env": {
+    "CLAUDE_CODE_ENABLE_TELEMETRY": "1"
+  },
   "permissions": {
     "allow": [
       "Read(*)",
       "Write(*)",
-      "Bash(*)"
+      "Bash"
     ]
   },
-  "env": {
-    "CLAUDE_CODE_ENABLE_TELEMETRY": "1"
-  }
+  "alwaysThinkingEnabled": false
 }
