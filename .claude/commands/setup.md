@@ -1,3 +1,8 @@
+---
+description: Configure project with Python and workflow settings
+allowed-tools: Read, Edit, Write
+---
+
 Make sure there is a claude.md. If there isn't, exit this prompt, and instruct the user to run /init
 
 If there is, add the following info:

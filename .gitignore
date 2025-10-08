@@ -8,3 +8,4 @@ tags_exclude
 .DS_Store
 .ruby-gemset
 .DS_Store
+file-history

@@ -1,3 +1,8 @@
+---
+description: Execute incomplete prompts from plan.md
+allowed-tools: Read, Edit, Write, Bash, Grep, Glob
+---
+
 Open @plan.md and identify any prompts not marked as completed.
 For each incomplete prompt:
     Double-check if it's truly unfinished (if uncertain, ask for clarification).
