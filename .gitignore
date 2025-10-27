@@ -9,3 +9,4 @@ tags_exclude
 .ruby-gemset
 .DS_Store
 file-history
+.claude/history.jsonl
