@@ -6,8 +6,15 @@
     "allow": [
       "Read(*)",
       "Write(*)",
-      "Bash"
-    ]
+      "Bash",
+      "Bash(dot-agent:*)",
+      "Read(/tmp/*)",
+      "Write(/tmp/*)"
+    ],
+    "deny": [],
+    "ask": [],
+    "defaultMode": "default"
   },
+  "model": "opus",
   "alwaysThinkingEnabled": true
 }
