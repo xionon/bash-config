@@ -1,16 +1,15 @@
 ---
+name: do-plan
 description: Execute incomplete prompts from plan.md
-allowed-tools: Read, Edit, Write, Bash, Grep, Glob
 ---
 
-Open @plan.md and identify any prompts not marked as completed.
+Read plan.md and identify any prompts not marked as completed.
 For each incomplete prompt:
     Double-check if it's truly unfinished (if uncertain, ask for clarification).
     If you confirm it's already done, skip it.
     Otherwise, implement it as described.
     Make sure the tests pass, and the program builds/runs
     Commit the changes to your repository with a clear commit message.
-    Update @plan.md to mark this prompt as completed.
+    Update plan.md to mark this prompt as completed.
 After you finish each prompt, pause and wait for user review or feedback.
 Repeat with the next unfinished prompt as directed by the user.
-

@@ -1,6 +1,6 @@
 ---
+name: session-summary
 description: Generate session summary with metrics and insights
-allowed-tools: Write
 ---
 
 Create session_{slug}_{timestamp}.md with a complete summary of our session. Include:
