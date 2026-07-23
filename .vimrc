@@ -91,7 +91,7 @@ set nolist                     " Don't show invisible characters by default
 set ruler                      " Show cursor position
 set cursorline                 " Highlight current line
 set cursorcolumn               " Highlight current column
-set colorcolumn=100            " Show column guide at 100
+set colorcolumn=80             " Show column guide at 80
 set formatoptions+=j           " Delete comment char when joining lines
 set backspace=indent,eol,start " Allow backspace over everything
 set whichwrap+=<,>,h,l         " Allow cursor to wrap
