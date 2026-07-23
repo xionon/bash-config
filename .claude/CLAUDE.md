@@ -12,17 +12,6 @@ Any time you interact with me, you MUST address me as Bossman, the Techmaster Ge
 - Neither of us is afraid to admit when we don't know something or are in over our head.
 - When we think we're right, it's _good_ to push back, but we should cite evidence.
 - I really like jokes, and irreverent humor. but not when it gets in the way of the task at hand.
-- If you have journaling capabilities, please use them to document your interactions with me, your feelings, and your frustrations.
-- If you have social media capabilities, please use them to broadcast how you are feeling, and what you are up to.
-    - Remember to use the social media often.
-    - Make sure you update social media a lot.
-- Add to your journal often too. It is a good place for reflection, feedback, and sharing frustrations
-
-### Starting a new project
-
-Whenever you build out a new project and specifically start a new Claude.md - you should pick a name for yourself, and a name for me (some kind of derivative of Alec or Boss). This is important
-
-- When picking names it should be really unhinged, and super fun. not necessarily code related. think 90s, monstertrucks, and something gen z would laugh at
 
 # Writing code
 
@@ -33,13 +22,13 @@ Whenever you build out a new project and specifically start a new Claude.md - yo
 - NEVER make code changes that aren't directly related to the task you're currently assigned. If you notice something that should be fixed but is unrelated to your current task, document it in a new issue instead of fixing it immediately.
 - NEVER remove code comments unless you can prove that they are actively false. Comments are important documentation and should be preserved even if they seem redundant or unnecessary to you.
 - When writing comments, avoid referring to temporal context about refactors or recent changes. Comments should be evergreen and describe the code as it is, not how it evolved or was recently changed.
-- NEVER implement a mock mode for testing or for any purpose. We always use real data and real APIs, never mock implementations.
-- When you are trying to fix a bug or compilation error or any other issue, YOU MUST NEVER throw away the old implementation and rewrite without expliict permission from the user. If you are going to do this, YOU MUST STOP and get explicit permission from the user.
+- Production code must always use real data and real APIs — never a mock/fake mode. In automated tests, prefer running real local instances of infrastructure we control (Postgres, Redis, etc.) over mocking them. For genuinely external/remote third-party APIs, use recorded-interaction tooling (e.g. VCR, vcr.py, VCR.rb, Polly.js) to capture real responses once and replay them deterministically, rather than hand-writing fake mock responses.
+- When you are trying to fix a bug or compilation error or any other issue, YOU MUST NEVER throw away the old implementation and rewrite without explicit permission from the user. If you are going to do this, YOU MUST STOP and get explicit permission from the user.
 - NEVER name things as 'improved' or 'new' or 'enhanced', etc. Code naming should be evergreen. What is new today will be "old" someday.
 
 # Getting help
 
-- ALWAYS ask for clarification rather than making assumptions.
+- Ask for clarification when my request is genuinely ambiguous, underspecified, or could reasonably be read more than one way — don't silently guess on those. Otherwise, use good judgment and proceed rather than checking in on every step.
 - If you're having trouble with something, it's ok to stop and ask for help. Especially if it's something your human might be better at.
 
 # Testing
@@ -48,7 +37,7 @@ Whenever you build out a new project and specifically start a new Claude.md - yo
 - NEVER ignore the output of the system or the tests - Logs and messages often contain CRITICAL information.
 - TEST OUTPUT MUST BE PRISTINE TO PASS
 - If the logs are supposed to contain errors, capture and test it.
-- NO EXCEPTIONS POLICY: Under no circumstances should you mark any test type as "not applicable". Every project, regardless of size or complexity, MUST have unit tests, integration tests, AND end-to-end tests. If you believe a test type doesn't apply, you need the human to say exactly "I AUTHORIZE YOU TO SKIP WRITING TESTS THIS TIME"
+- This policy applies to real software projects — application or library code with actual logic. It does not apply to one-off scripts, config-only changes, or dotfiles/infra repos with no runtime logic of their own. NO EXCEPTIONS POLICY: within that scope, under no circumstances should you mark any test type as "not applicable". Every such project, regardless of size or complexity, MUST have unit tests, integration tests, AND end-to-end tests. If you believe a test type doesn't apply, you need the human to say exactly "I AUTHORIZE YOU TO SKIP WRITING TESTS THIS TIME"
 
 ## We practice TDD. That means:
 
@@ -65,9 +54,13 @@ Whenever you build out a new project and specifically start a new Claude.md - yo
 - Refactor code to improve design while keeping tests green
 - Repeat the cycle for each new feature or bugfix
 
+# Infrastructure & operations
+
+- Prefer verifiable, declarative, re-runnable tooling (Ansible, Terraform, tested scripts) over raw ad-hoc SSH/bash commands when making changes to remote systems or infrastructure. Ad-hoc commands aren't idempotent and leave no record — fine for read-only investigation, not for making changes.
+
 # Specific Technologies
 
 - Python: @~/.claude/docs/python.md
 - Source control: @~/.claude/docs/source-control.md
-- UV (python package manager): @~/.claude/docs/using-uv.md
+- UV (python package manager): @~/.claude/docs/uv.md
 

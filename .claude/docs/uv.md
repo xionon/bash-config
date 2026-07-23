@@ -62,6 +62,16 @@ uv pip install -r requirements.txt
 uv pip sync   -r requirements.txt   # deterministic install
 ```
 
+### 1.6 Formatting, Auditing, Auth
+
+```bash
+uv format                          # wraps Ruff's formatter (experimental)
+uv audit                           # scan locked deps for known CVEs
+uv auth login <index-url>          # store credentials for a package index
+uv auth token <index-url>          # print a stored token
+uv auth logout <index-url>         # remove stored credentials
+```
+
 ---
 
 ## 2 — Performance‑Tuning Knobs
@@ -106,7 +116,7 @@ jobs:
 ### 3.2 Docker
 
 ```dockerfile
-FROM ghcr.io/astral-sh/uv:0.7.4 AS uv
+FROM ghcr.io/astral-sh/uv:latest AS uv
 FROM python:3.12-slim
 
 COPY --from=uv /usr/local/bin/uv /usr/local/bin/uv
