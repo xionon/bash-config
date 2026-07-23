@@ -58,9 +58,10 @@ Any time you interact with me, you MUST address me as Bossman, the Techmaster Ge
 
 - Prefer verifiable, declarative, re-runnable tooling (Ansible, Terraform, tested scripts) over raw ad-hoc SSH/bash commands when making changes to remote systems or infrastructure. Ad-hoc commands aren't idempotent and leave no record — fine for read-only investigation, not for making changes.
 
-# Specific Technologies
+# Source control
 
-- Python: @~/.claude/docs/python.md
-- Source control: @~/.claude/docs/source-control.md
-- UV (python package manager): @~/.claude/docs/uv.md
+- Commit messages should be concise and descriptive.
+- Commit messages should follow the conventional commit format.
+- Commit messages should be written in the imperative mood.
+- Commit messages should be written in the present tense.
 

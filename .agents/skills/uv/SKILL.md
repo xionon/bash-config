@@ -1,10 +1,22 @@
-### uv Field Manual (Code‑Gen Ready, Bootstrap‑free)
+---
+name: uv
+description: Python packaging and environment management with uv — project setup, dependency management, running scripts and CLI tools, Python version management, CI/Docker recipes, and migrating off pip/poetry/pyenv/virtualenv. Use whenever writing or running Python code, or managing Python dependencies.
+---
+
+# uv — Python Packaging & Environment Manager
+
+## Conventions
+
+- Always use uv for Python package and environment management (`uv add`, `uv run`, `uv sync`, etc.) — never pip, poetry, or easy_install directly.
+- Every Python project must have a `pyproject.toml` at its root. If one doesn't exist, create it with `uv init` rather than hand-writing it.
+
+## Field Manual (Code-Gen Ready, Bootstrap-free)
 
 *Assumption: `uv` is already installed and available on `PATH`.*
 
 ---
 
-## 0 — Sanity Check
+### 0 — Sanity Check
 
 ```bash
 uv --version               # verify installation; exits 0
@@ -14,9 +26,9 @@ If the command fails, halt and report to the user.
 
 ---
 
-## 1 — Daily Workflows
+### 1 — Daily Workflows
 
-### 1.1 Project ("cargo‑style") Flow
+#### 1.1 Project ("cargo-style") Flow
 
 ```bash
 uv init myproj                     # ① create pyproject.toml + .venv
@@ -24,28 +36,28 @@ cd myproj
 uv add ruff pytest httpx           # ② fast resolver + lock update
 uv run pytest -q                   # ③ run tests in project venv
 uv lock                            # ④ refresh uv.lock (if needed)
-uv sync --locked                   # ⑤ reproducible install (CI‑safe)
+uv sync --locked                   # ⑤ reproducible install (CI-safe)
 ```
 
-### 1.2 Script‑Centric Flow (PEP 723)
+#### 1.2 Script-Centric Flow (PEP 723)
 
 ```bash
 echo 'print("hi")' > hello.py
-uv run hello.py                    # zero‑dep script, auto‑env
+uv run hello.py                    # zero-dep script, auto-env
 uv add --script hello.py rich      # embeds dep metadata
 uv run --with rich hello.py        # transient deps, no state
 ```
 
-### 1.3 CLI Tools (pipx Replacement)
+#### 1.3 CLI Tools (pipx Replacement)
 
 ```bash
 uvx ruff check .                   # ephemeral run
-uv tool install ruff               # user‑wide persistent install
+uv tool install ruff               # user-wide persistent install
 uv tool list                       # audit installed CLIs
 uv tool update --all               # keep them fresh
 ```
 
-### 1.4 Python Version Management
+#### 1.4 Python Version Management
 
 ```bash
 uv python install 3.10 3.11 3.12
@@ -53,7 +65,7 @@ uv python pin 3.12                 # writes .python-version
 uv run --python 3.10 script.py
 ```
 
-### 1.5 Legacy Pip Interface
+#### 1.5 Legacy Pip Interface
 
 ```bash
 uv venv .venv
@@ -62,7 +74,7 @@ uv pip install -r requirements.txt
 uv pip sync   -r requirements.txt   # deterministic install
 ```
 
-### 1.6 Formatting, Auditing, Auth
+#### 1.6 Formatting, Auditing, Auth
 
 ```bash
 uv format                          # wraps Ruff's formatter (experimental)
@@ -74,13 +86,13 @@ uv auth logout <index-url>         # remove stored credentials
 
 ---
 
-## 2 — Performance‑Tuning Knobs
+### 2 — Performance-Tuning Knobs
 
 | Env Var                   | Purpose                 | Typical Value |
-| ------------------------- | ----------------------- | ------------- |
+| ------------------------- | ------------------------ | ------------- |
 | `UV_CONCURRENT_DOWNLOADS` | saturate fat pipes      | `16` or `32`  |
 | `UV_CONCURRENT_INSTALLS`  | parallel wheel installs | `CPU_CORES`   |
-| `UV_OFFLINE`              | enforce cache‑only mode | `1`           |
+| `UV_OFFLINE`              | enforce cache-only mode | `1`           |
 | `UV_INDEX_URL`            | internal mirror         | `https://…`   |
 | `UV_PYTHON`               | pin interpreter in CI   | `3.11`        |
 | `UV_NO_COLOR`             | disable ANSI coloring   | `1`           |
@@ -94,9 +106,9 @@ uv cache clean                     # wipe wheels & sources
 
 ---
 
-## 3 — CI/CD Recipes
+### 3 — CI/CD Recipes
 
-### 3.1 GitHub Actions
+#### 3.1 GitHub Actions
 
 ```yaml
 # .github/workflows/test.yml
@@ -113,7 +125,7 @@ jobs:
       - run: uv run pytest -q
 ```
 
-### 3.2 Docker
+#### 3.2 Docker
 
 ```dockerfile
 FROM ghcr.io/astral-sh/uv:latest AS uv
@@ -129,10 +141,10 @@ CMD ["uv", "run", "python", "-m", "myapp"]
 
 ---
 
-## 4 — Migration Matrix
+### 4 — Migration Matrix
 
-| Legacy Tool / Concept | One‑Shot Replacement        | Notes                 |
-| --------------------- | --------------------------- | --------------------- |
+| Legacy Tool / Concept | One-Shot Replacement        | Notes                 |
+| ---------------------- | --------------------------- | --------------------- |
 | `python -m venv`      | `uv venv`                   | 10× faster create     |
 | `pip install`         | `uv pip install`            | same flags            |
 | `pip-tools compile`   | `uv pip compile` (implicit) | via `uv lock`         |
@@ -142,19 +154,19 @@ CMD ["uv", "run", "python", "-m", "myapp"]
 
 ---
 
-## 5 — Troubleshooting Fast‑Path
+### 5 — Troubleshooting Fast-Path
 
-| Symptom                    | Resolution                                                     |
-| -------------------------- | -------------------------------------------------------------- |
-| `Python X.Y not found`     | `uv python install X.Y` or set `UV_PYTHON`                     |
-| Proxy throttling downloads | `UV_HTTP_TIMEOUT=120 UV_INDEX_URL=https://mirror.local/simple` |
-| C‑extension build errors   | `unset UV_NO_BUILD_ISOLATION`                                  |
-| Need fresh env             | `uv cache clean && rm -rf .venv && uv sync`                    |
-| Still stuck?               | `RUST_LOG=debug uv ...` and open a GitHub issue                |
+| Symptom                    | Resolution                                                      |
+| --------------------------- | ---------------------------------------------------------------- |
+| `Python X.Y not found`     | `uv python install X.Y` or set `UV_PYTHON`                       |
+| Proxy throttling downloads | `UV_HTTP_TIMEOUT=120 UV_INDEX_URL=https://mirror.local/simple`   |
+| C-extension build errors   | `unset UV_NO_BUILD_ISOLATION`                                    |
+| Need fresh env             | `uv cache clean && rm -rf .venv && uv sync`                      |
+| Still stuck?               | `RUST_LOG=debug uv ...` and open a GitHub issue                  |
 
 ---
 
-## 6 — Exec Pitch (30 s)
+### 6 — Exec Pitch (30 s)
 
 ```text
 • 10–100× faster dependency & env management in one binary.
@@ -164,7 +176,7 @@ CMD ["uv", "run", "python", "-m", "myapp"]
 
 ---
 
-## 7 — Agent Cheat‑Sheet (Copy/Paste)
+### 7 — Agent Cheat-Sheet (Copy/Paste)
 
 ```bash
 # new project
@@ -188,7 +200,3 @@ uv tool install pre-commit
 uv python install 3.12
 uv python pin 3.12
 ```
-
----
-
-*End of manual*
