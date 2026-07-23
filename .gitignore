@@ -10,3 +10,5 @@ tags_exclude
 .DS_Store
 file-history
 .claude/history.jsonl
+
+**/.claude/settings.local.json
