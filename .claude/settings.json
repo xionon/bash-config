@@ -15,6 +15,17 @@
     "ask": [],
     "defaultMode": "default"
   },
-  "model": "opus",
-  "alwaysThinkingEnabled": true
+  "model": "sonnet",
+  "statusLine": {
+    "type": "command",
+    "command": "bash /Users/alechipshear/.claude/statusline-command.sh"
+  },
+  "enabledPlugins": {
+    "frontend-design@claude-plugins-official": true
+  },
+  "alwaysThinkingEnabled": true,
+  "effortLevel": "medium",
+  "tui": "fullscreen",
+  "verbose": true,
+  "agentPushNotifEnabled": true
 }
