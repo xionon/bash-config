@@ -1,2 +1,5 @@
 ---
 gem: "--no-ri --no-rdoc"
+# aikido-endpoint-ruby-gemrc-start
+:ssl_ca_cert: /Library/Application Support/AikidoSecurity/EndpointProtection/run/endpoint-protection-ruby-combined-ca.pem
+# aikido-endpoint-ruby-gemrc-end
