@@ -1,0 +1,6 @@
+# Keep task checkouts out of repository roots and agent-specific folders.
+# Worktrunk expands this from the repository and branch selected by `wt switch`.
+worktree-path = "~/worktrees/{{ repo }}/{{ branch | sanitize }}"
+
+[list]
+json-schema = 2
