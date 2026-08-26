@@ -1,1 +1,1 @@
-/Users/alechipshear/.agents/AGENTS.md
+../.agents/AGENTS.md
