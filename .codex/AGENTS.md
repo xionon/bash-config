@@ -1,1 +1,1 @@
-/home/alec/.agents/AGENTS.md
+../.agents/AGENTS.md
