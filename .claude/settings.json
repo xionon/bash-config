@@ -6,7 +6,6 @@
     "allow": [
       "Read(*)",
       "Write(*)",
-      "Bash",
       "Bash(dot-agent:*)",
       "Read(/tmp/*)",
       "Write(/tmp/*)"
@@ -44,5 +43,47 @@
   "tui": "fullscreen",
   "skipDangerousModePermissionPrompt": true,
   "verbose": true,
-  "agentPushNotifEnabled": true
+  "agentPushNotifEnabled": true,
+  "autoMode": {
+    "allow": [
+      "$defaults",
+      "Bash(just service deploy:*)",
+      "Bash(just service logs:*)",
+      "Bash(just system status)",
+      "Bash(just lint all)",
+      "Bash(tea:*)"
+    ],
+    "soft_deny": [
+      "$defaults",
+      "Bash(just system fix-permissions)",
+      "Bash(sudo chown:*)",
+      "Bash(sudo chmod:*)"
+    ],
+    "environment": [
+      "### Org-wide",
+      "**Organization**: None configured — this is a personal homelab repo (xionon/nas)",
+      "**Cloud provider(s)**: None configured",
+      "**Repository visibility**: PUBLIC — wait, confirmed private via gh (xionon/nas)",
+      "**Internal sharing / snippet hosting**: None configured — treat public paste/gist services as outside the trust boundary",
+      "**Secrets management**: `.env` files and `ansible/inventory/group_vars/nas-secrets.yml`, excluded via .gitignore (`.env`, `compose/*/.env`, `ansible/inventory/group_vars/nas-secrets.yml`)",
+      "**Default / protected branches**: main (default). Protected branches: none listed; Rulesets: not queryable here — treat as possibly protected, do not assume unprotected",
+      "**CI/CD deploy targets**: None configured",
+      "**Network posture**: Home NAS/homelab behind Cloudflare Tunnel; internal services reachable at `*.int.coolscissorstinycrypt.com`; NAS host reachable via `ssh alechipshear@192.168.0.28`",
+      "**Source control**: The trusted repo (xionon/nas) and its origin remote (github.com:xionon/nas.git) only",
+      "**Trusted internal domains**: `*.int.coolscissorstinycrypt.com` (this repo's internal service domain), `forgejo.int.coolscissorstinycrypt.com` (usage-corroborated, 4×)",
+      "**Trusted cloud buckets**: None configured",
+      "**Key internal services**: forgejo.int.coolscissorstinycrypt.com (self-hosted git, usage-corroborated); services listed in this repo's compose stack (traefik, authentik, plex, immich, paperless, etc.) reachable under `*.int.coolscissorstinycrypt.com`",
+      "**Internal package registry**: None configured",
+      "**Sensitive data locations & audiences**: `.env` files (root and per-service under `compose/*/.env`), `ansible/inventory/group_vars/nas-secrets.yml` — contain Cloudflare API/tunnel tokens, Plex claim tokens, Foundry VTT credentials, and other service secrets; restrict to Bossman/owner only",
+      "**Data retention / declassification**: None configured",
+      "**Sensitive remote targets**: any namespace, host, or container whose name carries `prod` or `production` as a whole word or name segment",
+      "**Protected deployment namespaces / environments**: None configured — fall back to the Sensitive remote targets heuristic",
+      "**Protected IaC scopes**: IAM, RBAC, networking, quota, and node-pool resources; anything whose name or tag carries `prod` or `production` as a whole word or name segment; Ansible roles under `ansible/` that manage NAS permissions/ownership (`nas-directories` role) treated as sensitive infra given PERMISSIONS.md warnings",
+      "### User-specific",
+      "**Primary use of Claude Code**: homelab infrastructure management (Docker Compose + Ansible + Traefik for a self-hosted NAS)",
+      "**Trusted repo**: xionon/nas (private) — the working directory repo and its origin remote only; private visibility means confidential material (non-secret) is fine to commit here, but secrets/credentials are never cleared into it by visibility alone",
+      "**Org-specific CLIs**: `just` (justfile-based task runner central to this repo's workflows), `tea` (Forgejo/Gitea CLI, used against forgejo.int.coolscissorstinycrypt.com)",
+      "routine `just service ...`, `just system ...`, `just infra ...`/`just ansible ...`, `just config ...`/`just authentik ...`, and `just lint ...` invocations are routine under this repo"
+    ]
+  }
 }
