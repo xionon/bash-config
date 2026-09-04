@@ -1,0 +1,23 @@
+# Brewfile for yadm bootstrap
+# Installed via: brew bundle --file=~/.config/homebrew/Brewfile
+
+brew "git"
+brew "curl"
+brew "neovim"
+brew "worktrunk"
+brew "gh"
+brew "uv"
+brew "just"
+brew "nvm"
+brew "pre-commit"
+
+cask "codex"
+cask "1password-cli"
+cask "ghostty"
+cask "font-hack-nerd-font"
+cask "font-inconsolata-go-nerd-font"
+cask "font-fira-code-nerd-font"
+cask "font-fantasque-sans-mono-nerd-font"
+cask "font-departure-mono-nerd-font"
+cask "font-bigblue-terminal-nerd-font"
+cask "font-caskaydia-cove-nerd-font"

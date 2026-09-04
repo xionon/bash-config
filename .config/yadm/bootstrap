@@ -22,30 +22,11 @@ git config --global core.excludesfile ~/.gitignore
 # Install Nerd Fonts for proper icon display
 install_nerd_fonts() {
     echo "🔤 Installing Nerd Fonts..."
-    
+
     case "$OS" in
         Darwin*)
             if command -v brew >/dev/null 2>&1; then
-                echo "Installing Nerd Fonts via Homebrew..."
-                local fonts=(
-                    "font-hack-nerd-font"
-                    "font-inconsolata-go-nerd-font"
-                    "font-fira-code-nerd-font"
-                    "font-fantasque-sans-mono-nerd-font"
-                    "font-departure-mono-nerd-font"
-                    "font-bigblue-terminal-nerd-font"
-                    "font-caskaydia-cove-nerd-font"
-                )
-                
-                for font in "${fonts[@]}"; do
-                    if ! brew list --cask "$font" >/dev/null 2>&1; then
-                        echo "Installing $font..."
-                        brew install --cask "$font"
-                    else
-                        echo "✅ $font already installed"
-                    fi
-                done
-                echo "✅ Nerd Fonts installed"
+                echo "✅ Nerd Fonts installed via Brewfile (see install_packages)"
                 echo "📝 Remember to set your terminal font to a Nerd Font (e.g., 'Hack Nerd Font Mono')"
             else
                 echo "⚠️  Homebrew not found. Please install Nerd Fonts manually from:"
@@ -134,24 +115,45 @@ install_vim_plug() {
     echo "To finish installing vim plugins, run: vim +PlugInstall +qall"
 }
 
+# Install Homebrew itself if it isn't already present
+install_homebrew() {
+    case "$OS" in
+        Darwin*|Linux*)
+            if ! command -v brew >/dev/null 2>&1; then
+                echo "🍺 Homebrew not found, installing..."
+                /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+                # Put brew on PATH for the rest of this script
+                if [ -x /opt/homebrew/bin/brew ]; then
+                    eval "$(/opt/homebrew/bin/brew shellenv)"
+                elif [ -x /usr/local/bin/brew ]; then
+                    eval "$(/usr/local/bin/brew shellenv)"
+                elif [ -x /home/linuxbrew/.linuxbrew/bin/brew ]; then
+                    eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+                fi
+                echo "✅ Homebrew installed"
+            else
+                echo "✅ Homebrew already installed"
+            fi
+            ;;
+    esac
+}
+
 # Install packages based on OS
 install_packages() {
     echo "📦 Installing packages for $OS..."
-    
+
     case "$OS" in
         Darwin*)
             # macOS
             if command -v brew >/dev/null 2>&1; then
-                echo "Installing packages via Homebrew..."
-                # Only install if not already present
-                command -v nvim >/dev/null 2>&1 || brew install neovim
-                command -v git >/dev/null 2>&1 || brew install git
-                command -v curl >/dev/null 2>&1 || brew install curl
+                echo "Installing packages via Homebrew Brewfile..."
+                brew bundle --file="$HOME/.config/homebrew/Brewfile"
                 echo "✅ macOS packages installed"
             else
                 echo "⚠️  Homebrew not found. Please install manually:"
                 echo "   - neovim"
-                echo "   - git" 
+                echo "   - git"
                 echo "   - curl"
             fi
             ;;
@@ -208,6 +210,7 @@ setup_neovim() {
 
 # Main installation flow
 main() {
+    install_homebrew
     install_packages
     install_nerd_fonts
     install_vim_plug
