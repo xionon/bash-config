@@ -83,3 +83,7 @@ CRITICAL: NEVER USE --no-verify WHEN COMMITTING CODE
 
 For task work that changes a Git repository, use the shared `worktrunk-worktrees` skill at `~/.agents/skills/worktrunk-worktrees/SKILL.md`. It standardizes worktree creation, branch naming, and post-merge cleanup across Claude, Codex, and Pi. Do not create worktrees with `git worktree add` or tool-specific worktree features when `wt` is available.
 
+# Sharing config across tools
+
+We want skills to be universally available, so install skills into `~/.agents` and symlink to it from your appropriate configuration directory. This same principle applies to any share-able config, not just skills: keep one canonical copy under `~/.agents` (e.g. this file lives at `~/.agents/AGENTS.md`) and symlink it from tool-specific locations (e.g. `~/.claude/CLAUDE.md`) rather than duplicating content.
+
